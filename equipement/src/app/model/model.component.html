@@ -1,0 +1,544 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+  
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    
+    <!-- Sidebar Start -->
+<app-layout></app-layout>
+
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Marques</h2>
+    <p>Gérez les marques d'équipements par type
+
+
+
+</p>
+  </div>
+<button class="add-user-btn" (click)="openModal()" >
+  <span class="icon">+</span>Nouveau Model
+
+</button>
+</div>
+<div class="modal" [ngClass]="{'show': isModalOpen}" (click)="closeOnOutsideClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3 style="font-size: 20px; margin-bottom: -10px;" >Ajouter un nouveau Type</h3>
+
+   <form (ngSubmit)="onRegister()" #userForm="ngForm" novalidate>
+<br>
+
+  <label style="font-size: 14px;   font-weight: 500; color: #000000; margin-bottom:-40px" for="email">Nom du model</label>
+<input
+class="form-inputp"
+  id="nomType"
+  type="text"
+  name="nomType"
+  [(ngModel)]="newModal.nomModel"
+  placeholder="Ex: Latitude 5520, Elitebook 845G..."
+  required
+  
+>
+
+<div *ngIf="signupErrors.nomModel" style="color:red">{{ signupErrors.nomModel }}</div>
+
+<br>
+  <label style="font-size: 14px; font-weight: 500; color: #000000;" for="type">Marque</label>
+  <br>
+<select
+  class="form-inputp"
+  id="type"
+  name="marque"
+  [(ngModel)]="newModal.marque"
+  style="width: 100%;"
+  required
+>
+  <!-- ✅ Option placeholder -->
+  <option [ngValue]="null" disabled hidden>Sélectionner une marque</option>
+
+  <!-- ✅ Liste des vraies marques -->
+  <option *ngFor="let marque of marques" [ngValue]="marque">
+    {{ marque.nomMarque }}
+  </option>
+</select>
+<div *ngIf="signupErrors.marque" style="color:red">{{ signupErrors.marque }}</div>
+
+<div *ngIf="newModal.marque?.types?.length">
+  <label style="font-size: 14px; font-weight: 500; color: #000000; margin-top: 10px;">Type associé</label>
+  <select
+    class="form-inputp"
+    [(ngModel)]="newModal.typeAssociee"
+    name="selectedType"
+    style="width: 100%;"
+    required
+  >
+    <option [value]="null" disabled hidden>Sélectionner un type</option>
+    <option *ngFor="let type of newModal.marque?.types" [value]="type.nomType">
+      {{ type.nomType }}
+    </option>
+  </select>
+</div>
+<br>
+  <label style="font-size: 14px; font-weight: 500; color: #000000;" for="type">Fournisseur</label>
+  <br>
+<select
+  class="form-inputp"
+  id="type"
+  name="fourniseeur"
+  [(ngModel)]="newModal.fournisseur"
+  style="width: 100%;"
+  required
+>
+ <option [ngValue]="null" disabled hidden>Sélectionner fournisseur</option>
+  <option *ngFor="let fournisseur of fournisseurs" [ngValue]="fournisseur">
+    {{ fournisseur.nomFournisseur }}
+  </option>
+</select>
+<div *ngIf="signupErrors.fournisseur" style="color:red">{{ signupErrors.fournisseur }}</div>
+  <label style="font-size: 14px;   font-weight: 500; color: #000000;" for="email">Description</label>
+<textarea
+  id="description"
+  name="description"
+  [(ngModel)]="newModal.specification"
+  placeholder="Ex: Intel i5, 8GB RAM, 256GB SSD..."
+  rows="3"
+  cols="60"
+  
+  
+></textarea>
+
+
+
+
+
+  <button type="submit">Enregistrer</button>
+</form>
+
+  </div>
+</div>
+
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow rounded-4">
+
+      <h5 id="updateModalLabel">📝 Modifier les informations</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+
+      <div class="modal-body">
+        <form #updateForm="ngForm">
+
+          <!-- Nom du modèle -->
+          <div class="mb-4">
+            <label for="nomModel" class="form-label fw-semibold fs-5">Nom du Model</label>
+            <input
+              type="text"
+              class="form-inputp"
+              id="nomModel"
+              name="nomModel"
+              [(ngModel)]="newModal1.nomModel"
+              #nomModel="ngModel"
+              required
+              minlength="2"
+            />
+            <div *ngIf="nomModel.invalid && nomModel.touched" style="color:red">
+              <div *ngIf="nomModel.errors?.['required']">Le nom est requis</div>
+              <div *ngIf="nomModel.errors?.['minlength']">Minimum 2 caractères</div>
+            </div>
+          </div>
+
+          <!-- Marque -->
+          <label class="form-label" for="type">Marque</label>
+          <select
+            class="form-inputp"
+            id="type"
+            name="marque"
+            [(ngModel)]="newModal1.marque"
+            #marque="ngModel"
+            [compareWith]="compareMarques"
+            required
+          >
+            <option [ngValue]="null" disabled hidden>Sélectionner une marque</option>
+            <option *ngFor="let marque of marques" [ngValue]="marque">
+              {{ marque.nomMarque }}
+            </option>
+          </select>
+          <div *ngIf="marque.invalid && marque.touched" style="color:red">La marque est requise</div>
+
+          <!-- Fournisseur -->
+          <label class="form-label" for="type">Fournisseur</label>
+          <select
+            class="form-inputp"
+            id="type"
+            name="fournisseur"
+            [(ngModel)]="newModal1.fournisseur"
+            #fournisseur="ngModel"
+            [compareWith]="compareFournisseurs"
+            required
+          >
+            <option [ngValue]="null" disabled hidden>Sélectionner Fournisseur</option>
+            <option *ngFor="let fournisseur of fournisseurs" [ngValue]="fournisseur">
+              {{ fournisseur.nomFournisseur }}
+            </option>
+          </select>
+          <div *ngIf="fournisseur.invalid && fournisseur.touched" style="color:red">Le fournisseur est requis</div>
+
+          <!-- Description -->
+          <label class="form-label" for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            [(ngModel)]="newModal1.specification"
+            rows="3"
+            cols="60"
+            class="form-control"
+          ></textarea>
+
+        </form>
+      </div>
+
+      <!-- Boutons -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button
+          type="button"
+          class="btn btn-success px-4"
+          [disabled]="updateForm.invalid"
+          (click)="onUpdateClick(updateForm)">
+          💾 Sauvegarder
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+           
+    <style>
+  .card1 {
+    width: 280px;
+    height: 190px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px #e5e7eb;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+
+  .card1-icon {
+    background-color: #e0edff;
+    color: #2563eb;
+    padding: 6px;
+    border-radius: 8px;
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card1-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .card1-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .card1-date {
+    font-size: 15px;
+    color: #9ca3af;
+    margin: 2px 0 0 0;
+  }
+
+  .card1-desc {
+    color: #4b5563;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .card1-badge {
+    background-color: #ffffff;
+    color: #0d00ff;
+    padding: 4px 10px;
+    border-radius: 990px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+.card1-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  color: #000000; /* Darker gray (high opacity) */
+  font-weight: 500;;      /* ⬅️ makes text bold */
+
+
+}
+
+
+  .card1-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card1-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 0px solid #e5e7eb;
+  }
+  
+</style>
+
+<!-- Simple Notification Bar -->
+<div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+  {{ notification.message }}
+</div>
+
+<div *ngFor="let marque of marques" class="card1">
+  <div class="card1-flex">
+   
+
+    <div>
+      <p class="card1-title">{{ marque.nomMarque }}</p>
+      <p class="card1-date">Créé le 15/01/2024</p> <!-- ou {{ type.dateCreation }} si tu veux le rendre dynamique -->
+    </div>
+  </div>
+
+  <p class="card1-desc">
+  <span *ngFor="let type of marque.types; let i = index">
+    {{ type.nomType }}<span *ngIf="i < marque.types.length - 1">, </span>
+  </span>
+</p>
+
+  <div class="card1-footer">
+   <span class="card1-badge">{{ marque.models.length }}</span>
+<div>
+    model
+</div>
+</div>
+</div>
+
+
+
+       
+
+          </div>
+          
+<br>
+<br>
+                <div class="col-12">
+              <div class="card">
+                <div class="card-body" style="">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Liste Des Models</h4>
+                      <p class="card-subtitle">
+                    visualiser les models disponibles
+                      </p>
+                    </div>
+            <div class="ms-auto mt-3 mt-md-0">
+                      <select class="form-select theme-select border-0" aria-label="Default select example">
+                        <option value="1">March 2025</option>
+                        <option value="2">March 2025</option>
+                        <option value="3">March 2025</option>
+                      </select>
+                    </div>
+                  </div>
+                  <br>
+<div class="d-flex align-items-center gap-2 mt-3">
+  <!-- Champ de recherche -->
+  <div class="search-wrapper flex-grow-1">
+    <div class="custom-search">
+      <input type="text"  placeholder="Rechercher un model..." class="form-control" [(ngModel)]="searchText" />
+      <span class="icon-search"></span>
+    </div>
+  </div>
+
+  <!-- Select à côté -->
+  <div>
+<select class="form-select" style="min-width: 200px;" [(ngModel)]="selectedMarqueName">
+  <option value="">Filtrer par marque</option>
+  <option *ngFor="let marque of marques" [value]="marque.nomMarque">{{ marque.nomMarque }}</option>
+</select>
+
+
+  </div>
+</div>
+
+                  <div class="table-responsive mt-4">
+                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="px-0 text-muted">
+                            Nom Modele
+                          </th>
+                          <th scope="col" class="px-0 text-muted">Marque Name</th>
+
+                           <th scope="col" class="px-0 text-muted">Type Associes</th>
+                        
+                           <th scope="col" class="px-0 text-muted">
+                            Spécifications	
+                          </th>
+                         
+                          <th scope="col" class="px-0 text-muted text-end">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+               <tbody>
+      <tr *ngFor="let model of filteredModels">
+    <td class="px-1">
+     <div class="ms-3">
+     <h5 class="mb-0 fw-bolder" style="font-size: 18px; color: #2c3e50;">{{ model.nomModel }}</h5>
+      </div>
+    </td>
+
+    <td class="px-0"> <span
+      class="badge bg-info me-1">
+      {{ model.marque?.nomMarque}}
+    </span></td>
+ <td class="px-0"> <span
+      class="badge bg-info me-1">
+      {{ model.typeAssociee}}
+    </span></td>
+
+
+   <td class="px-0">
+ 
+        <div class="ms-3">
+          <h6 class="mb-0 fw-bolder">{{ model.specification }}</h6>
+         
+     
+      </div>
+</td>
+
+  <td class="text-end">
+  <button class="btn btn-smc" (click)="openModal1(model)"  title="Modifier" style="color:blue; font-size: 18px; border: none; background: none;">
+    ✏️
+  </button>
+  <button class="btn btn-sm"(click)="confirmDelete(model.idModel)" title="Supprimer" style="color:red; font-size: 18px; border: none; background: none;">
+    🗑️
+  </button>
+</td>
+
+
+
+
+  </tr>
+
+
+</tbody>
+
+
+                    </table>
+                    <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-4">
+                <nav aria-label="Navigation des pages">
+                  <ul class="pagination">
+                    <!-- Bouton Précédent -->
+                    <li class="page-item" [class.disabled]="currentPage === 0">
+                      <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0">
+                        Précédent
+                      </button>
+                    </li>
+
+                    <!-- Numéros de pages -->
+                    <li *ngFor="let page of getPageNumbers()"
+                        class="page-item"
+                        [class.active]="page === currentPage">
+                      <button class="page-link" (click)="goToPage(page)">
+                        {{ page + 1 }}
+                      </button>
+                    </li>
+
+                    <!-- Bouton Suivant -->
+                    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                      <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">
+                        Suivant
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestion des États</title>
+</head>
+<body>
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+     <app-layout></app-layout>
+    <div class="body-wrapper">
+      <header class="app-header">
+      </header>
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+          <div class="welcome-header">
+            <h1>Bienvenue dans votre espace</h1>
+            <p>Gérez efficacement les états des équipements</p>
+          </div>
+
+          <div class="header-container">
+            <div class="header-text">
+              <h2>États des Équipements</h2>
+              <p>Gérez les différents états des équipements</p>
+            </div>
+            <button class="add-user-btn" (click)="openModal()">
+              <span class="icon">+</span>Nouvel État
+            </button>
+          </div>
+
+          <div class="search-wrapper">
+            <div class="custom-search">
+              <input type="text" placeholder="Rechercher un état..." [(ngModel)]="searchText" />
+              <span class="icon-search"></span>
+            </div>
+          </div>
+
+          <!-- Modal -->
+          <div class="modal" [ngClass]="{'show': isModalOpen}" (click)="closeModal()">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <span class="close" (click)="closeModal()">&times;</span>
+              <h3>{{editingEtat ? 'Modifier l\'état' : 'Ajouter un nouvel état'}}</h3>
+              <form (ngSubmit)="onSubmit()" #etatForm="ngForm">
+                <div class="form-group">
+                  <label>Titre *</label>
+                  <input type="text" [(ngModel)]="currentEtat.titre" name="titre" required
+                         class="form-control" placeholder="Entrez le titre de l'état">
+                </div>
+                <div class="form-group">
+                  <label>Responsable *</label>
+                  <input type="text" [(ngModel)]="currentEtat.responsable" name="responsable" required
+                         class="form-control" placeholder="Entrez le nom du responsable">
+                </div>
+                <div class="form-group">
+                  <label>État précédent</label>
+                  <select [(ngModel)]="currentEtat.precedent" name="precedent" class="form-control">
+                    <option [ngValue]="null">Aucun</option>
+                    <option *ngFor="let etat of etats" [ngValue]="etat">{{etat.titre}}</option>
+                  </select>
+                </div>
+                <div class="form-actions">
+                  <button type="button" class="btn-cancel" (click)="closeModal()">Annuler</button>
+                  <button type="submit" class="btn-submit" [disabled]="!etatForm.form.valid || isLoading">
+                    {{isLoading ? 'Traitement...' : (editingEtat ? 'Mettre à jour' : 'Enregistrer')}}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Notification -->
+          <div *ngIf="notification.show" class="notification" [ngClass]="notification.type">
+            {{notification.message}}
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <div *ngIf="isLoading" class="loading-spinner">
+              <div class="spinner"></div>
+              <p>Chargement des états...</p>
+            </div>
+
+            <table class="table" *ngIf="!isLoading">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Responsable</th>
+                  <th>État précédent</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Boucle sur les séquences -->
+                <ng-container *ngFor="let sequence of getGroupedEtats(); let sequenceIndex = index">
+
+                  <!-- En-tête de séquence -->
+                  <tr class="sequence-header">
+                    <td colspan="4">
+                      <strong>Processus {{ sequenceIndex + 1 }}</strong>
+                      ({{ sequence.length }} etat{{ sequence.length > 1 ? 's' : '' }})
+                    </td>
+                  </tr>
+
+                  <!-- États de la séquence -->
+                  <tr *ngFor="let etat of sequence; let etatIndex = index">
+                    <td>{{ etat.titre }}</td>
+                    <td>{{ etat.responsable }}</td>
+                    <td>{{ etat.precedent?.titre || 'Aucun' }}</td>
+                    <td>
+                      <button class="edit-btn" (click)="editEtat(etat)" title="Modifier">
+                        ✏️
+                      </button>
+                      <button class="delete-btn" (click)="deleteEtat(etat.id)" title="Supprimer">
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- Séparateur entre séquences -->
+                  <tr *ngIf="sequenceIndex < getGroupedEtats().length - 1" class="sequence-separator">
+                    <td colspan="4">
+                      <hr class="separator-line">
+                    </td>
+                  </tr>
+
+                </ng-container>
+
+                <!-- Message si aucun état -->
+                <tr *ngIf="getGroupedEtats().length === 0">
+                  <td colspan="4" class="no-data">Aucun état trouvé</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

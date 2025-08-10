@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilisateurs & Équipements</title>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div>
+          <a href="./index.html">
+            <img src="assets/images/logos/ommp.png" alt="" style="width: 180px; height: auto; display: block; margin-left: 40px;" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-6"></i>
+          </div>
+        </div>
+
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <span class="hide-menu">Home</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="./index.html" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Tableau de bord</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/dashboard']" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Types Equipements</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/marque']" aria-label="" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Marques</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/model']" aria-label="" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Models</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/equipement']" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Equipements</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/fournisseur']" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Fournisseurs</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" [routerLink]="['/utilisateur-equipement']" aria-expanded="false">
+                <i class="ti ti-atom"></i>
+                <span class="hide-menu">Utilisateurs & Équipements</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header"></header>
+      <!--  Header End -->
+      
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+
+          <!-- Simple Notification Bar -->
+          <div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+            {{ notification.message }}
+          </div>
+
+          <!-- Header Section -->
+          <div class="welcome-header">
+            <h1>👥💻 Utilisateurs & Équipements</h1>
+            <p>Gérez l'affectation des équipements aux utilisateurs de votre organisation</p>
+          </div>
+
+          <!-- Stats Container -->
+          <div class="stats-container">
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-label">Total Utilisateurs</div>
+              <div class="stat-value">{{ getTotalUtilisateurs() }}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💻</div>
+              <div class="stat-label">Total Équipements</div>
+              <div class="stat-value">{{ getTotalEquipements() }}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">✅</div>
+              <div class="stat-label">Avec Équipements</div>
+              <div class="stat-value">{{ getUtilisateursAvecEquipements() }}</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">❌</div>
+              <div class="stat-label">Sans Équipements</div>
+              <div class="stat-value">{{ getUtilisateursSansEquipements() }}</div>
+            </div>
+          </div>
+
+          <!-- Equipment Status Stats -->
+          <div class="equipment-stats">
+            <div class="equipment-stat-card active">
+              <div class="equipment-stat-label">Équipements Actifs</div>
+              <div class="equipment-stat-value">{{ getEquipementsActifs() }}</div>
+            </div>
+            <div class="equipment-stat-card maintenance">
+              <div class="equipment-stat-label">En Maintenance</div>
+              <div class="equipment-stat-value">{{ getEquipementsEnMaintenance() }}</div>
+            </div>
+            <div class="equipment-stat-card out-of-service">
+              <div class="equipment-stat-label">Hors Service</div>
+              <div class="equipment-stat-value">{{ getEquipementsHorsService() }}</div>
+            </div>
+          </div>
+
+          <!-- Header with Search -->
+          <div class="header-container">
+            <div class="header-text">
+              <h2>Liste des Utilisateurs et leurs Équipements</h2>
+              <p>Consultez l'affectation des équipements par utilisateur</p>
+            </div>
+            <button class="add-affectation-btn" (click)="openAffectationModal()">
+              <span class="icon">+</span>Nouvelle Affectation
+            </button>
+          </div>
+
+          <!-- Search Section -->
+          <div class="search-wrapper">
+            <div class="custom-search">
+              <div class="icon-search"></div>
+              <input type="text" 
+                     placeholder="Rechercher par nom, département, équipement..." 
+                     [(ngModel)]="searchText" 
+                     (input)="onSearch()" />
+            </div>
+          </div>
+
+          <!-- Users and Equipment Table -->
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive mt-4">
+                      <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                        <thead>
+                          <tr>
+                            <th scope="col" class="px-0 text-muted">Utilisateur</th>
+                            <th scope="col" class="px-0 text-muted">Département</th>
+                            <th scope="col" class="px-0 text-muted">Équipements Affectés</th>
+                            <th scope="col" class="px-0 text-muted">Nombre</th>
+                            <th scope="col" class="px-0 text-muted">Contact</th>
+                            <th scope="col" class="px-0 text-muted text-end">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let utilisateur of filteredUtilisateurs">
+                            <!-- Utilisateur Info -->
+                            <td class="px-1">
+                              <div class="ms-3">
+                                <div class="user-info">
+                                  <img [src]="utilisateur.photo" 
+                                       alt="Utilisateur" 
+                                       class="user-avatar" 
+                                       style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover;">
+                                  <div>
+                                    <h6 class="mb-0 fw-bolder">{{ utilisateur.prenom }} {{ utilisateur.nom }}</h6>
+                                    <span class="text-muted fs-2">{{ utilisateur.poste }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            <!-- Département -->
+                            <td class="px-1">
+                              <span class="fw-medium">{{ utilisateur.departement }}</span>
+                            </td>
+
+                            <!-- Équipements -->
+                            <td class="px-1">
+                              <div class="equipment-list">
+                                <div *ngFor="let equipement of utilisateur.equipements; let i = index" 
+                                     class="equipment-item">
+                                  <div class="equipment-info">
+                                    <span class="equipment-name">{{ equipement.nom }}</span>
+                                    <span class="equipment-details">{{ equipement.marque }} {{ equipement.modele }}</span>
+                                    <span *ngIf="equipement.statut === 'Hors service'" class="equipment-status status-out">
+                                      {{ equipement.statut }}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div *ngIf="utilisateur.equipements.length === 0" class="no-equipment">
+                                  <span class="text-muted">Aucun équipement affecté</span>
+                                </div>
+                              </div>
+                            </td>
+
+                            <!-- Nombre d'équipements -->
+                            <td class="px-1">
+                              <span class="fw-bold">{{ utilisateur.equipements.length }}</span>
+                            </td>
+
+                            <!-- Contact -->
+                            <td class="px-1">
+                              <div class="contact-info">
+                                <small class="d-block">{{ utilisateur.email }}</small>
+                                <small class="text-muted">{{ utilisateur.telephone }}</small>
+                              </div>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="text-end">
+                              <button class="btn btn-sm" 
+                                      title="Voir détails" 
+                                      (click)="voirDetails(utilisateur)"
+                                      style="color:blue; font-size: 18px; border: none; background: none; margin-right: 10px;">
+                                👁️
+                              </button>
+                              <button class="btn btn-sm" 
+                                      title="Gérer équipements" 
+                                      (click)="gererEquipements(utilisateur)"
+                                      style="color:green; font-size: 18px; border: none; background: none;">
+                                ⚙️
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal for New Affectation -->
+          <div class="modal" [ngClass]="{'show': isAffectationModalOpen}" (click)="closeAffectationOnOutsideClick($event)">
+            <div class="modal-content" (click)="$event.stopPropagation()">
+              <span class="close" (click)="closeAffectationModal()">&times;</span>
+              <h3 style="font-size: 24px; margin-bottom: 30px; text-align: center; color: #007bff;">
+                📋 Nouvelle Affectation d'Équipement
+              </h3>
+
+              <form [formGroup]="affectationForm" (ngSubmit)="OnRegister()" novalidate>
+
+                <!-- Section 1: Sélection Utilisateur -->
+                <div class="form-section">
+                  <h4 class="section-title">👤 Utilisateur</h4>
+                  <div class="form-row">
+                    <div class="form-group full-width">
+                      <label for="userRegistrationNumber">Numéro d'enregistrement utilisateur *</label>
+                      <select formControlName="userRegistrationNumber" class="form-control" required>
+
+                         <option [ngValue]="null" disabled hidden>Sélectionner utilisateur</option>
+  <option *ngFor="let utilisateur of utilisateur1" [ngValue]="utilisateur.registrationNumber">
+    {{ utilisateur.username }}
+  </option>
+                      
+                      </select>
+                      <div *ngIf="affectationForm.get('userRegistrationNumber')?.invalid && affectationForm.get('userRegistrationNumber')?.touched"
+                           class="error-message">
+                        <span *ngIf="affectationForm.get('userRegistrationNumber')?.errors?.['required']">L'utilisateur est requis</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 2: Sélection Équipement -->
+                <div class="form-section">
+                  <h4 class="section-title">💻 Équipement</h4>
+                  <div class="form-row">
+                    <div class="form-group full-width">
+                      <label for="equipement">Sélectionner des équipements *</label>
+                      <select formControlName="equipement" class="form-control" required multiple>
+                                             <option [ngValue]="null" disabled hidden>Sélectionner utilisateur</option>
+  <option *ngFor="let equip of equipements" [ngValue]="equip">
+    {{ equip.model?.nomModel }}
+  </option>
+                      </select>
+                      <div *ngIf="affectationForm.get('equipement')?.invalid && affectationForm.get('equipement')?.touched"
+                           class="error-message">
+                        <span *ngIf="affectationForm.get('equipement')?.errors?.['required']">Au moins un équipement est requis</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Section 3: Détails de l'Affectation -->
+                <div class="form-section">
+                  <h4 class="section-title"> Détails de l'Affectation</h4>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="dateAffectation">Date d'affectation *</label>
+                      <input type="date"
+                             formControlName="dateAffectation"
+                             class="form-control">
+                      <div *ngIf="affectationForm.get('dateAffectation')?.invalid && affectationForm.get('dateAffectation')?.touched"
+                           class="error-message">
+                        <span *ngIf="affectationForm.get('dateAffectation')?.errors?.['required']">La date d'affectation est requise</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group full-width">
+                      <label for="commentaire">Commentaire</label>
+                      <textarea formControlName="commentaire"
+                                class="form-control"
+                                rows="3"
+                                placeholder="Commentaire optionnel sur l'affectation..."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="form-actions">
+                  <button type="button" (click)="closeAffectationModal()" class="btn btn-secondary">
+                    Annuler
+                  </button>
+                  <button type="submit" class="btn btn-primary" [disabled]="affectationForm.invalid">
+                    <span *ngIf="!submitted">Créer l'affectation</span>
+                    <span *ngIf="submitted">Création en cours...</span>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

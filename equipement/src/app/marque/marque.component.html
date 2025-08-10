@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+  
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    
+    <!-- Sidebar Start -->
+<app-layout></app-layout>
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Marques</h2>
+    <p>Gérez les marques d'équipements par type
+
+
+
+</p>
+  </div>
+<button class="add-user-btn" (click)="openModal()">
+  <span class="icon">+</span>Nouveau Marque
+
+</button>
+</div>
+
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow rounded-4">
+      
+      <h5 id="updateModalLabel">📝 Modifier les informations</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+
+      <div class="modal-body">
+        <form #updateForm="ngForm">
+          <!-- Nom du type -->
+          <div class="mb-4">
+            <label for="nomMarque" class="form-label fw-semibold fs-5">Nom du type</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nomMarque"
+              name="nomMarque"
+              [(ngModel)]="newMarque1.nomMarque"
+              #nomMarque="ngModel"
+              required
+              minlength="2"
+            />
+            <div *ngIf="nomMarque.invalid && nomMarque.touched" style="color:red">
+              <div *ngIf="nomMarque.errors?.['required']">Le nom de Marque est requis</div>
+              <div *ngIf="nomMarque.errors?.['minlength']">Le nom de marque doit contenir au moins 2 caractères</div>
+            </div>
+          </div>
+
+          <!-- Types disponibles -->
+          <div class="mb-4">
+            <label for="typeMarque" class="form-label fw-semibold fs-5">Types Disponibles</label>
+            <select
+              class="form-inputp"
+              id="typeMarque"
+              name="typeMarque"
+              [(ngModel)]="newMarque1.types"
+              #typeMarque="ngModel"
+              required
+              multiple
+            >
+              <option *ngFor="let type of Types" [ngValue]="type">{{ type.nomType }}</option>
+            </select>
+            <div *ngIf="typeMarque.invalid && typeMarque.touched" style="color:red">
+              <div *ngIf="typeMarque.errors?.['required']">Veuillez sélectionner au moins un type</div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-success px-4" (click)="onUpdateClick(updateForm)">
+          💾 Sauvegarder
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" [ngClass]="{'show': isModalOpen}" (click)="closeOnOutsideClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3 style="font-size: 20px; margin-bottom: -10px;">Ajouter un nouveau</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onRegister()" novalidate>
+      <br>
+
+      <label style="font-size: 14px; font-weight: 500; color: #000000; margin-bottom:-40px" for="nomType">Nom du marque</label>
+      <input
+        class="form-inputp"
+        id="nomType"
+        type="text"
+        formControlName="nomMarque"
+        placeholder="Ex: Ordinateur portable"
+        required
+      />
+      <div *ngIf="form.get('nomMarque')?.invalid && form.get('nomMarque')?.touched" style="color:red">
+        <div *ngIf="form.get('nomMarque')?.errors?.['required']">Le nom de Marque est requis</div>
+        <div *ngIf="form.get('nomMarque')?.errors?.['minlength']">Le nom de marque doit contenir au moins 2 caractères</div>
+      </div>
+      <br>
+
+      <div *ngIf="imagePreview" style="margin-top: 10px;">
+        <img [src]="imagePreview" alt="Aperçu" style="width: 100px; height: auto; border: 1px solid #ccc; border-radius: 5px;" />
+      </div>
+
+      <label style="font-size: 14px; font-weight: 500; color: #000000;" for="type">Type d'équipement</label>
+      <select
+        class="form-inputp"
+        id="type"
+        formControlName="types"
+        multiple
+      >
+        <option *ngFor="let type of Types" [ngValue]="type">{{ type.nomType }}</option>
+      </select>
+<div *ngIf="form.get('types')?.invalid && form.get('types')?.touched" style="color:red">
+  <div *ngIf="form.get('types')?.errors?.['required']">Veuillez sélectionner au moins un type</div>
+</div>
+
+      <br>
+
+      <label style="font-size: 14px; font-weight: 500; color: #000000;" for="image">Logo de la marque</label>
+      <input 
+        type="file" 
+        id="image" 
+        (change)="onFileSelected($event)" 
+        accept="image/*"
+        class="form-inputp"
+      />
+
+      <button type="submit">Enregistrer</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+           
+    <style>
+  .card1 {
+    width: 280px;
+    height: 190px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px #e5e7eb;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+
+  .card1-icon {
+    background-color: #e0edff;
+    color: #2563eb;
+    padding: 6px;
+    border-radius: 8px;
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card1-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .card1-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .card1-date {
+    font-size: 15px;
+    color: #9ca3af;
+    margin: 2px 0 0 0;
+  }
+
+  .card1-desc {
+    color: #4b5563;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .card1-badge {
+    background-color: #e0edff;
+    color: #0d00ff;
+    padding: 4px 10px;
+    border-radius: 990px;
+    font-size: 12px;
+  }
+
+.card1-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  color: #000000; /* Darker gray (high opacity) */
+  font-weight: 500;;      /* ⬅️ makes text bold */
+
+
+}
+
+
+  .card1-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card1-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 0px solid #e5e7eb;
+  }
+  
+</style>
+
+<!-- Simple Notification Bar -->
+<div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+  {{ notification.message }}
+</div>
+
+<div *ngFor="let type of Types" class="card1">
+  <div class="card1-flex">
+   
+
+    <div>
+      <p class="card1-title">{{ type.nomType }}</p>
+      <p class="card1-date">Créé le 15/01/2024</p> <!-- ou {{ type.dateCreation }} si tu veux le rendre dynamique -->
+    </div>
+  </div>
+
+  <p class="card1-desc">{{ type.description }}</p>
+
+  <div class="card1-footer">
+   <span class="card1-badge">{{ type.marques.length }} marques</span>
+
+    <button class="card1-button">Modifier</button>
+  </div>
+</div>
+
+
+
+       
+
+          </div>
+          
+<br>
+<br>
+                <div class="col-12">
+              <div class="card">
+                <div class="card-body" style="">
+                  <div class="d-md-flex align-items-center">
+                    <div>
+                      <h4 class="card-title">Liste Des Marques</h4>
+                      <p class="card-subtitle">
+                    visualiser les marques disponibles
+                      </p>
+                    </div>
+                    <div class="ms-auto mt-3 mt-md-0">
+                      <select class="form-select theme-select border-0" aria-label="Default select example">
+                        <option value="1">March 2025</option>
+                        <option value="2">March 2025</option>
+                        <option value="3">March 2025</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="table-responsive mt-4">
+                    <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="px-0 text-muted">
+                            Marque Image
+                          </th>
+                          <th scope="col" class="px-0 text-muted">Marque Name</th>
+                          <th scope="col" class="px-0 text-muted">
+                            Types Associes
+                          </th>
+                          <th scope="col" class="px-0 text-muted text-end">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+               <tbody>
+  <tr *ngFor="let marque of Marques">
+    <td class="px-1">
+      <div class="d-flex align-items-center">
+        <img
+          [src]="marque.image || 'assets/images/profile/default.jpg'"
+          class="rounded-circle"
+          width="80"
+          style="border-radius: 0% !important;"
+          alt="Image Marque"
+        />
+        <div class="ms-3">
+          <h6 class="mb-0 fw-bolder">{{ marque.nomMarque }}</h6>
+         
+        </div>
+      </div>
+    </td>
+    <td class="px-0">{{ marque.nomMarque }}</td>
+   <td class="px-0">
+  <ng-container *ngIf="marque.types && marque.types.length > 0; else noTypes">
+    <span
+      class="badge bg-info me-1"
+      *ngFor="let type of marque.types"
+    >
+      {{ type.nomType }}
+    </span>
+  </ng-container>
+  <ng-template #noTypes>
+    <span class="badge bg-secondary">Aucun type</span>
+  </ng-template>
+</td>
+
+
+  <td class="text-end">
+  <button class="btn btn-sm" (click)="openModal1(marque)" title="Modifier" style="color:blue; font-size: 18px; border: none; background: none;">
+    ✏️
+  </button>
+  <button class="btn btn-sm" (click)="confirmDelete(marque.idMarque)" title="Supprimer" style="color:red; font-size: 18px; border: none; background: none;">
+    🗑️
+  </button>
+</td>
+
+
+
+
+  </tr>
+
+</tbody>
+
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

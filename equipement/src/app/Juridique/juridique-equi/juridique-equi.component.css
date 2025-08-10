@@ -1,0 +1,123 @@
+/* Styles simples pour le modal de panne - cohérent avec les autres composants */
+
+/* Bouton de déclaration de panne */
+.welcome-header {
+  background: linear-gradient(to right, #2563eb, #1e40af); /* bleu dégradé */
+  color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.welcome-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.welcome-header p {
+  font-size: 16px;
+  margin: 0;
+  opacity: 0.9;
+}
+.btn-danger.btn-sm {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Modal simple - même style que les autres composants */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close:hover {
+  color: #000;
+}
+
+/* Styles des formulaires - même style que les autres composants */
+.form-inputp {
+  width: 100%;
+  padding: 12px;
+  margin: 50px 0 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.form-inputp:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Boutons - même style que les autres composants */
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #c82333;
+}
+
+.btn-submit:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}

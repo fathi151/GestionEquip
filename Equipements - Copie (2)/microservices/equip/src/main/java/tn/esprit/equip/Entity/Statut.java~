@@ -1,0 +1,7 @@
+package tn.esprit.equip.Entity;
+
+public enum Statut {
+    
+
+
+}

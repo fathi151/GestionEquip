@@ -1,0 +1,127 @@
+package com.example.microserviceuser.Controller;
+
+import com.example.microserviceuser.Entity.*;
+import com.example.microserviceuser.Repository.AgentRepository;
+import com.example.microserviceuser.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:4200")
+public class UserManagementController {
+
+    @Autowired
+    private UserService userService;
+    private AgentRepository agentRepository;
+
+    // User endpoints
+    @GetMapping("/all")
+    public List<User>getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{registrationNumber}")
+    public User getUserByRegistrationNumber(@PathVariable String registrationNumber) {
+        User user = agentRepository.findByUser_RegistrationNumber(registrationNumber).getUser();
+        return user;
+    }
+
+
+
+
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User savedUser = userService.saveUser(user);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    @PutMapping("/update/{registrationNumber}")
+    public ResponseEntity<User> updateUser(@PathVariable String registrationNumber, @RequestBody User user) {
+        user.setRegistrationNumber(registrationNumber);
+        User updatedUser = userService.saveUser(user);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/delete/{registrationNumber}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String registrationNumber) {
+        userService.deleteUser(registrationNumber);
+        return ResponseEntity.ok().build();
+    }
+
+    // Status endpoints
+    @GetMapping("/statuses")
+    public ResponseEntity<List<Status>> getAllStatuses() {
+        return ResponseEntity.ok(userService.getAllStatuses());
+    }
+
+    @PostMapping("/statuses")
+    public ResponseEntity<Status> createStatus(@RequestBody Status status) {
+        Status savedStatus = userService.saveStatus(status);
+        return ResponseEntity.ok(savedStatus);
+    }
+
+    // Position endpoints
+    @GetMapping("/positions")
+    public ResponseEntity<List<Position>> getAllPositions() {
+        return ResponseEntity.ok(userService.getAllPositions());
+    }
+
+    @PostMapping("/positions")
+    public ResponseEntity<Position> createPosition(@RequestBody Position position) {
+        Position savedPosition = userService.savePosition(position);
+        return ResponseEntity.ok(savedPosition);
+    }
+
+    // Job endpoints
+    @GetMapping("/jobs")
+    public ResponseEntity<List<Job>> getAllJobs() {
+        return ResponseEntity.ok(userService.getAllJobs());
+    }
+
+    @PostMapping("/jobs")
+    public ResponseEntity<Job> createJob(@RequestBody Job job) {
+        Job savedJob = userService.saveJob(job);
+        return ResponseEntity.ok(savedJob);
+    }
+
+    // Harbor endpoints
+    @GetMapping("/harbors")
+    public ResponseEntity<List<Harbor>> getAllHarbors() {
+        return ResponseEntity.ok(userService.getAllHarbors());
+    }
+
+    @PostMapping("/harbors")
+    public ResponseEntity<Harbor> createHarbor(@RequestBody Harbor harbor) {
+        Harbor savedHarbor = userService.saveHarbor(harbor);
+        return ResponseEntity.ok(savedHarbor);
+    }
+
+    // Agent endpoints
+    @GetMapping("/agents")
+    public List<Agent> getAllAgents() {
+        return userService.getAllAgents();
+    }
+
+    @PostMapping("/agents")
+    public ResponseEntity<Agent> createAgent(@RequestBody Agent agent) {
+        Agent savedAgent = userService.saveAgent(agent);
+        return ResponseEntity.ok(savedAgent);
+    }
+
+    @GetMapping("/agents/by-username/{username}")
+    public ResponseEntity<Agent> getAgentByUsername(@PathVariable String username) {
+        Agent agent = userService.findAgentByUsername(username);
+        return agent != null ? ResponseEntity.ok(agent) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/agents/by-email/{email}")
+    public Agent getAgentByEmail(@PathVariable String email) {
+     Optional<Agent> agent = agentRepository.findByEmail(email);
+        return agent.orElse(null);
+    }
+}

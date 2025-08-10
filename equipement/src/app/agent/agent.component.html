@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+  
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    
+    <!-- Sidebar Start -->
+<app-navebar></app-navebar>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+  <div class="header-text">
+    <h2>Ajouter un Nouveau Agent</h2>
+    <p>Gérez les différents types d'équipements informatiques</p>
+
+
+<div style="display: flex; justify-content: flex-end; padding-right: 60px;">
+  <a (click)="openModal()" style="background-color: #007bff; color: white; text-decoration: none; border: none; padding: 8px 16px; border-radius: 4px;">
+    <span class="icon">+</span> Ajouter un Agent
+  </a>
+</div>
+</div>
+
+
+
+<div class="modal" [ngClass]="{'show': isModalOpen}" (click)="closeOnOutsideClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3>Ajouter un nouvel Agent</h3>
+
+<form [formGroup]="AgentForm" novalidate (ngSubmit)="onSubmit()">
+  <!-- Bloc 1 : Infos personnelles -->
+  <div class="card mb-3 p-3 border-primary">
+    <h5>Informations personnelles</h5>
+
+    <div class="row">
+      <!-- Email -->
+      <div class="col-md-6 mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="Email" />
+        <div *ngIf="AgentForm.get('email')?.invalid && (AgentForm.get('email')?.touched || submitted)" class="text-danger">
+          Email requis et au moins 3 caractères
+        </div>
+      </div>
+
+      <!-- Genre -->
+      <div class="col-md-6 mb-3">
+        <label for="gender" class="form-label">Genre</label>
+        <select id="gender" class="form-select" formControlName="gender" required>
+          <option value="" disabled selected>Sélectionner un genre</option>
+          <option value="HOMME">Homme</option>
+          <option value="FEMME">Femme</option>
+        </select>
+        <div *ngIf="AgentForm.get('gender')?.invalid && (AgentForm.get('gender')?.touched || submitted)" class="text-danger">
+          Le genre est requis
+        </div>
+      </div>
+
+      <!-- Téléphone -->
+      <div class="col-md-6 mb-3">
+        <label for="phoneNumber" class="form-label">Téléphone</label>
+        <input id="phoneNumber" type="text" class="form-control" formControlName="phoneNumber" placeholder="Téléphone" />
+        <div *ngIf="AgentForm.get('phoneNumber')?.invalid && (AgentForm.get('phoneNumber')?.touched || submitted)" class="text-danger">
+          Numéro requis (min 8 chiffres)
+        </div>
+      </div>
+
+      <!-- Utilisateur -->
+      <div class="col-md-6 mb-3">
+        <label for="user" class="form-label">Utilisateur</label>
+        <select id="user" class="form-select" formControlName="user" required>
+          <option value="" disabled selected>Sélectionner un utilisateur</option>
+          <option *ngFor="let u of utilisateur1" [ngValue]="u">{{ u.username }}</option>
+        </select>
+        <div *ngIf="AgentForm.get('user')?.invalid && (AgentForm.get('user')?.touched || submitted)" class="text-danger">
+          Utilisateur requis
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bloc 2 : Infos compte -->
+  <div class="card p-3 border-secondary">
+    <h5>Informations du compte</h5>
+
+    <div class="row">
+      <!-- Username -->
+      <div class="col-md-6 mb-3">
+        <label for="username" class="form-label">Nom d'utilisateur</label>
+        <input id="username" type="text" class="form-control" formControlName="username" placeholder="Nom d'utilisateur" />
+        <div *ngIf="AgentForm.get('username')?.invalid && (AgentForm.get('username')?.touched || submitted)" class="text-danger">
+          Requis (min 3 caractères)
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="col-md-6 mb-3">
+        <label for="password" class="form-label">Mot de passe</label>
+        <input id="password" type="password" class="form-control" formControlName="password" placeholder="Mot de passe" />
+        <div *ngIf="AgentForm.get('password')?.invalid && (AgentForm.get('password')?.touched || submitted)" class="text-danger">
+          Requis (min 3 caractères)
+        </div>
+      </div>
+
+      <!-- Rôle -->
+      <div class="col-md-6 mb-3">
+        <label for="role" class="form-label">Rôle</label>
+        <select id="role" class="form-select" formControlName="role" required>
+          <option value="" disabled selected>Sélectionner un rôle</option>
+          <option value="ADMIN">Admin</option>
+          <option value="DSI">DSI</option>
+          <option value="DAG">DAG</option>
+           <option value="JURIDIQUE">JURIDIQUE</option>
+
+        </select>
+        <div *ngIf="AgentForm.get('role')?.invalid && (AgentForm.get('role')?.touched || submitted)" class="text-danger">
+          Rôle requis
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br />
+
+  <!-- Bouton de soumission -->
+  <button type="submit" (ngSubmit)="onSubmit()"  class="btn btn-primary w-100">
+    Enregistrer
+  </button>
+</form>
+
+
+  </div>
+</div>
+
+
+
+
+
+
+<!-- Notification de succès -->
+<div *ngIf="notification.show"
+     class="alert alert-success alert-dismissible fade show mt-3"
+     role="alert">
+  <strong>Succès!</strong> {{ notification.message }}
+  <button type="button" class="btn-close" (click)="hideNotification()" aria-label="Close"></button>
+</div>
+
+<!-- Tableau des agents -->
+<div class="card mt-4">
+  <div class="card-body">
+    <h5 class="card-title">Liste des Agents</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-primary">
+          <tr>
+            <!-- Bloc 1 : Infos personnelles -->
+            <th>Email</th>
+            <th>Genre</th>
+            <th>Téléphone</th>
+            <th>Utilisateur</th>
+
+            <!-- Bloc 2 : Infos du compte -->
+            <th>Nom d'utilisateur</th>
+            <th>Rôle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let agent of agents">
+            <td>{{ agent.email }}</td>
+            <td>{{ agent.gender }}</td>
+            <td>{{ agent.phoneNumber }}</td>
+            <td>{{ agent.user?.username }}</td>
+
+            <td>{{ agent.username }}</td>
+            <td>{{ agent.role }}</td>
+            <td>
+           <button class="btn btn-sm me-2" style="background-color: #1e90ff; color: white; border: none;">
+  Modifier
+</button>
+
+              <button class="btn btn-danger btn-sm" >Supprimer</button>
+            </td>
+          </tr>
+          <tr *ngIf="!agents || agents.length === 0">
+            <td colspan="7">Aucun agent disponible</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+           
+
+
+
+
+       
+          </div>
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

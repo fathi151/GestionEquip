@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+
+    <!-- Sidebar Start -->
+<app-layout></app-layout>
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Équipements</h2>
+    <p>Gérez les différents types d'équipements informatiques
+
+</p>
+  </div>
+
+</div>
+
+<!-- Formulaire de recherche simple -->
+<div class="card mt-3 mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Recherche par utilisateur et statut</h5>
+
+    <div class="row g-3">
+      <!-- Recherche par utilisateur -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Utilisateur</mat-label>
+          <input
+            type="text"
+            matInput
+            [formControl]="utilisateurSearchCtrl"
+            [matAutocomplete]="autoUserSearch"
+            placeholder="Rechercher un utilisateur...">
+
+          <mat-autocomplete
+            #autoUserSearch="matAutocomplete"
+            [displayWith]="displayUtilisateur"
+            (optionSelected)="onUserSearchSelected($event.option.value)">
+            <mat-option *ngFor="let user of filteredUtilisateursSearch" [value]="user">
+              {{ user.firstName }} {{ user.lastName }} - {{ user.email }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Recherche par statut -->
+
+</div>
+  </div>
+</div>
+
+<div class="search-wrapper">
+  <div class="custom-search">
+    <input
+      type="text"
+      placeholder="Rechercher un equipement..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+      class="form-control"
+    />
+    <span class="icon-search"></span>
+  </div>
+</div>
+
+</div>
+<!-- Modal -->
+
+<!-- Modal de modification -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    .card-custom {
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-lightblue {
+      border: 1px solid #cfe2ff;
+      color: #0d6efd;
+      background-color: #e7f1ff;
+    }
+
+    .tag {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      border-radius: 15px;
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+
+.icon-box {
+  font-size: 48px; /* optional - for icon size */
+  width: 100px;     /* increase width */
+  height: 100px;    /* set height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d6efd;
+  margin-right: 10px;
+ border-radius: 0% !important;
+}
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+.card-custom {
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: #fff;
+  color: #212529; /* Darker text */
+  font-size: 0.95rem; /* Slightly larger base font */
+}
+
+.card-custom strong {
+  font-weight: 600; /* Heavier for labels */
+  color: #1a1a1a;
+}
+
+.card-custom h5 {
+  font-weight: 600;
+  color: #000;
+}
+
+.card-custom small,
+.text-muted {
+  color: #495057 !important; /* Less faded gray */
+}
+
+.icon-box {
+  font-size: 32px;
+  color: #0d6efd;
+  margin-right: 10px;
+}
+
+.tag {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border-radius: 15px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+
+
+  </style>
+
+<body class="bg-light">
+  <div class="container my-2">
+
+    <!-- Simple Notification Bar -->
+    <div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+      {{ notification.message }}
+    </div>
+
+    <!-- Tableau des équipements -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive mt-1">
+                <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="px-0 text-muted">Image</th>
+                      <th scope="col" class="px-0 text-muted">Modèle</th>
+                      <th scope="col" class="px-0 text-muted">N° Série</th>
+                      <th scope="col" class="px-0 text-muted">Date Declaration</th>
+                      <th scope="col" class="px-0 text-muted">Statut</th>
+                      <th scope="col" class="px-0 text-muted">Etat</th>
+                     <th scope="col" class="px-0 text-muted text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let equip of equiements">
+                      <!-- Image -->
+                                      <td class="px-1">
+  <img *ngIf="equip.image"
+       [src]="equip.image"
+       alt="Équipement"
+       class="rounded-circle img-fluid"
+       width="40" height="40"
+       (error)="equip.image = ''" />
+</td>
+
+                      <!-- Modèle -->
+                      <td class="px-1">
+                        <div class="ms-3">
+                          <h6 class="fw-semibold mb-0 fs-4">{{ equip.model?.nomModel }}</h6>
+                          <span class="fw-normal text-muted">Modèle</span>
+                        </div>
+                      </td>
+
+                      <!-- Numéro de série -->
+                      <td class="px-1">
+                        <span class="fw-normal">{{ equip.numSerie }}</span>
+                      </td>
+
+                      <!-- Date d'acquisition -->
+                      <td class="px-1">
+                        <span class="fw-normal">{{ equip.dateAffectation | date: 'dd/MM/yyyy' }}</span>
+                      </td>
+
+                      <!-- Statut -->
+                      <td class="px-1">
+                        <span class="badge rounded-pill"
+                              [style.background-color]="equip.statut === 'DISPONIBLE' ? '#28a745' : (equip.statut === 'AFFECTE' ? '#dc3545' : '#6c757d')"
+                              [style.color]="'white'">
+                          {{ equip.statut }}
+                        </span>
+                        <div *ngIf="equip.statut.toLowerCase() === 'affecte' || equip.statut.toLowerCase() === 'affecté'"
+                             class="text-muted small mt-1">
+                          Affecté à {{ NameUtilisateur[equip.idEqui] | uppercase }}
+                        </div>
+                      </td>
+                      <td class="px-1">
+                        <span class="fw-normal">{{equip.panne?.etatActuel?.titre}}</span>
+                      </td>
+
+
+
+
+                      <!-- Actions -->
+     <td class="px-1 text-end">
+
+   <!-- Bouton pour passer à l'état suivant (seulement si c'est un état DSI) -->
+   <button *ngIf="equip.panne?.etatActuel?.responsable==='JURIDIQUE' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 "
+            class="btn btn-sm btn-primary"
+            (click)="passerEtatSuivant(equip)"
+            title="Passer à l'état suivant: {{ getNextState(equip) }}">
+      <i class="fas fa-arrow-right"></i> Suivant {{ getNextState(equip) }}
+   </button>
+
+   <!-- Message pour état suivant d'un autre département -->
+   <span *ngIf="equip.panne?.etatActuel?.responsable!=='JURIDIQUE' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 && successorStates[equip.idEqui][0].responsable !== 'DSI'"
+         class="text-primary fw-normal">
+     <i class="fas fa-info-circle"></i> Prochain: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
+   </span>
+
+   <!-- Message "Aucune action suivante" en bleu -->
+   <span *ngIf="equip.panne && (!successorStates[equip.idEqui] || successorStates[equip.idEqui].length === 0)"
+         class="text-primary fw-normal">
+     <i class="fas fa-info-circle"></i> Aucune action suivante
+   </span>
+
+   <!-- Message pour équipements sans panne -->
+   <span *ngIf="!equip.panne"
+         class="text-muted fw-normal">
+     <i class="fas fa-check-circle"></i> Aucune action requise
+   </span>
+
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Pagination Bootstrap -->
+<nav class="mt-4 d-flex justify-content-center" *ngIf="totalPages > 1">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 0">
+      <a class="page-link" (click)="loadEquipements(currentPage - 1)">Précédent</a>
+    </li>
+
+    <li class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="i === currentPage">
+      <a class="page-link" (click)="loadEquipements(i)">{{ i + 1 }}</a>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <a class="page-link" (click)="loadEquipements(currentPage + 1)">Suivant</a>
+    </li>
+  </ul>
+</nav>
+
+  </div>
+</body>
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de déclaration de panne -->
+
+
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

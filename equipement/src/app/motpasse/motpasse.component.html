@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion</title>
+  <link rel="stylesheet" href="motpasse.component.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <form  novalidate>
+    <div class="login-container">
+      <div class="login-header">
+        <div class="icon-shield">🛡️</div>
+        <h1>Reset Password</h1>
+      </div>
+
+      <div class="login-box">
+        <h2>Authentification Sécurisée</h2>
+        <p class="subtitle">Saisir votre adresse email</p>
+
+        <!-- Email -->
+        <label for="email">Adresse email</label>
+        <div class="input-group">
+          <span class="icon">@</span>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            id="email"
+            placeholder="votre.email@universite.ma"
+            required
+            email
+            #emailRef="ngModel"
+          />
+        </div>
+        <div *ngIf="emailRef.invalid && emailRef.touched" class="error-message">
+          <span *ngIf="emailRef.errors?.['required']">L'email est requis.</span>
+          <span *ngIf="emailRef.errors?.['email']">Email invalide.</span>
+        </div>
+
+        <!-- Auth method -->
+      
+        
+        <!-- Mot de passe -->
+      
+        
+        <!-- Reconnaissance faciale -->
+      
+
+        <!-- Bouton Connexion -->
+        <button class="connect-btn" type="button" (click)="onForgotPassword()"[disabled]="!email">Reset Password</button>
+        <div *ngIf="message" 
+           style="margin-top: 15px; padding: 10px; border-radius: 5px; 
+                  background: {{ message.includes('Error') ? '#ffebee' : '#e8f5e9' }};
+                  color:  {{message.includes('Error') ? '#c62828' : '#2e7d32'}} ">
+        {{ message }}
+      </div>
+
+        <div class="forgot-link">
+          <a [routerLink]="['/utilisateur']">Remember your password ? connecter</a>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</body>
+</html>

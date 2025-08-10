@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+  
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    
+    <!-- Sidebar Start -->
+<app-layout></app-layout>
+
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid" style="width: 100%; max-width: 100%; padding: 0;">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Fournisseur</h2>
+    <p>Gérez les différents fournisseurs
+
+</p>
+  </div>
+
+</div>
+<div class="search-wrapper" style="margin-bottom: 3rem;">
+  <div class="custom-search">
+    <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Rechercher un historique..." />
+    <span class="icon-search"></span>
+  </div>
+</div>
+<!-- Modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- MODAL -->
+
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+            <div class="col-12" style="width: 100%; padding: 0;">
+              <!-- Message si aucun historique -->
+              <div *ngIf="historiques.length === 0" class="text-center py-4">
+                <p>Aucun historique disponible</p>
+              </div>
+
+              <!-- Liste des historiques -->
+              <div *ngFor="let historique of historiques" class="mb-3">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h6 class="mb-0 text-primary">Action #{{ historique.id }}</h6>
+                      <small class="text-muted">{{ historique.dateAffectation| date:'dd/MM/yyyy HH:mm' }}</small>
+                    </div>
+                   <p class="mb-0">
+  L’équipement {{ historique.equipement.model?.nomModel }} (N° Série) {{ historique.equipement.numSerie }} 
+  a été 
+  {{ historique.verrou === 'dessaffecter' ? 'désaffecté de' : 'affecté à' }} 
+  {{ historique.user.firstName }} {{ historique.user.lastName }}-{{ historique.user.registrationNumber }}.
+</p>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pagination -->
+              <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-4">
+                <nav aria-label="Navigation des pages">
+                  <ul class="pagination">
+                    <!-- Bouton Précédent -->
+                    <li class="page-item" [class.disabled]="currentPage === 0">
+                      <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 0">
+                        Précédent
+                      </button>
+                    </li>
+
+                    <!-- Numéros de pages -->
+                    <li *ngFor="let page of getPageNumbers()"
+                        class="page-item"
+                        [class.active]="page === currentPage">
+                      <button class="page-link" (click)="goToPage(page)">
+                        {{ page + 1 }}
+                      </button>
+                    </li>
+
+                    <!-- Bouton Suivant -->
+                    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+                      <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">
+                        Suivant
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+
+              <!-- Informations de pagination -->
+              <div class="text-center mt-2">
+                <small class="text-muted">
+                  Page {{ currentPage + 1 }} sur {{ totalPages }}
+                  ({{ historiques.length }} éléments affichés, 3 par page)
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+

@@ -1,0 +1,407 @@
+<!-- Notification -->
+<div *ngIf="notification.show" 
+     class="alert alert-dismissible fade show position-fixed" 
+     [ngClass]="{'alert-success': notification.type === 'success', 'alert-danger': notification.type === 'error'}"
+     style="top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
+  <i class="fas" [ngClass]="{'fa-check-circle': notification.type === 'success', 'fa-exclamation-circle': notification.type === 'error'}"></i>
+  {{ notification.message }}
+  <button type="button" class="btn-close" (click)="hideNotification()"></button>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2 p-0">
+      <app-navebar></app-navebar>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10">
+      <div class="container mt-4">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="card shadow-lg">
+              <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                  <i class="fas fa-user-plus me-2"></i>
+                  Enregistrement d'un Nouvel Utilisateur
+                </h3>
+              </div>
+              
+              <div class="card-body p-4">
+                <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" novalidate>
+                  
+                  <!-- Section: Informations Personnelles -->
+                  <div class="row mb-4">
+                    <div class="col-12">
+                      <h5 class="text-primary border-bottom pb-2">
+                        <i class="fas fa-user me-2"></i>Informations Personnelles
+                      </h5>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="firstName" class="form-label">Prénom <span class="text-danger">*</span></label>
+                      <input type="text" 
+                             class="form-control" 
+                             id="firstName"
+                             formControlName="firstName"
+                             [class.is-invalid]="submitted && f['firstName'].errors">
+                      <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
+                        <div *ngIf="f['firstName'].errors?.['required']">Le prénom est requis</div>
+                        <div *ngIf="f['firstName'].errors?.['minlength']">Le prénom doit contenir au moins 2 caractères</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="lastName" class="form-label">Nom <span class="text-danger">*</span></label>
+                      <input type="text" 
+                             class="form-control" 
+                             id="lastName"
+                             formControlName="lastName"
+                             [class.is-invalid]="submitted && f['lastName'].errors">
+                      <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
+                        <div *ngIf="f['lastName'].errors?.['required']">Le nom est requis</div>
+                        <div *ngIf="f['lastName'].errors?.['minlength']">Le nom doit contenir au moins 2 caractères</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                      <input type="email" 
+                             class="form-control" 
+                             id="email"
+                             formControlName="email"
+                             (blur)="checkEmailAvailability()"
+                             [class.is-invalid]="submitted && f['email'].errors">
+                      <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                        <div *ngIf="f['email'].errors?.['required']">L'email est requis</div>
+                        <div *ngIf="f['email'].errors?.['email']">Format d'email invalide</div>
+                        <div *ngIf="f['email'].errors?.['emailTaken']">Cet email est déjà utilisé</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="phoneNumber" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                      <input type="tel" 
+                             class="form-control" 
+                             id="phoneNumber"
+                             formControlName="phoneNumber"
+                             placeholder="0612345678"
+                             [class.is-invalid]="submitted && f['phoneNumber'].errors">
+                      <div *ngIf="submitted && f['phoneNumber'].errors" class="invalid-feedback">
+                        <div *ngIf="f['phoneNumber'].errors?.['required']">Le téléphone est requis</div>
+                        <div *ngIf="f['phoneNumber'].errors?.['pattern']">Format invalide (10 chiffres)</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="cin" class="form-label">CIN <span class="text-danger">*</span></label>
+                      <input type="text" 
+                             class="form-control" 
+                             id="cin"
+                             formControlName="cin"
+                             [class.is-invalid]="submitted && f['cin'].errors">
+                      <div *ngIf="submitted && f['cin'].errors" class="invalid-feedback">
+                        <div *ngIf="f['cin'].errors?.['required']">Le CIN est requis</div>
+                        <div *ngIf="f['cin'].errors?.['minlength']">Le CIN doit contenir au moins 6 caractères</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="dob" class="form-label">Date de Naissance <span class="text-danger">*</span></label>
+                      <input type="date" 
+                             class="form-control" 
+                             id="dob"
+                             formControlName="dob"
+                             [class.is-invalid]="submitted && f['dob'].errors">
+                      <div *ngIf="submitted && f['dob'].errors" class="invalid-feedback">
+                        <div *ngIf="f['dob'].errors?.['required']">La date de naissance est requise</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Section: Informations Professionnelles -->
+                  <div class="row mb-4 mt-5">
+                    <div class="col-12">
+                      <h5 class="text-primary border-bottom pb-2">
+                        <i class="fas fa-briefcase me-2"></i>Informations Professionnelles
+                      </h5>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="registrationNumber" class="form-label">Numéro d'Enregistrement <span class="text-danger">*</span></label>
+                      <input type="text" 
+                             class="form-control" 
+                             id="registrationNumber"
+                             formControlName="registrationNumber"
+                             [class.is-invalid]="submitted && f['registrationNumber'].errors">
+                      <div *ngIf="submitted && f['registrationNumber'].errors" class="invalid-feedback">
+                        <div *ngIf="f['registrationNumber'].errors?.['required']">Le numéro d'enregistrement est requis</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="grade" class="form-label">Grade <span class="text-danger">*</span></label>
+                      <select class="form-select"
+                              id="grade"
+                              formControlName="grade"
+                              [class.is-invalid]="submitted && f['grade'].errors">
+                        <option value="">Sélectionner un grade</option>
+                        <option *ngFor="let grade of grades" [value]="grade">
+                          {{ grade }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['grade'].errors" class="invalid-feedback">
+                        <div *ngIf="f['grade'].errors?.['required']">Le grade est requis</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="employment" class="form-label">Type d'Emploi <span class="text-danger">*</span></label>
+                      <select class="form-select"
+                              id="employment"
+                              formControlName="employment"
+                              [class.is-invalid]="submitted && f['employment'].errors">
+                        <option value="">Sélectionner un type d'emploi</option>
+                        <option *ngFor="let employment of employmentTypes" [value]="employment">
+                          {{ employment }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['employment'].errors" class="invalid-feedback">
+                        <div *ngIf="f['employment'].errors?.['required']">Le type d'emploi est requis</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="college" class="form-label">Département/Collège</label>
+                      <select class="form-select"
+                              id="college"
+                              formControlName="college">
+                        <option value="">Sélectionner un département</option>
+                        <option *ngFor="let college of colleges" [value]="college">
+                          {{ college }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="startingDate" class="form-label">Date de Début <span class="text-danger">*</span></label>
+                      <input type="date" 
+                             class="form-control" 
+                             id="startingDate"
+                             formControlName="startingDate"
+                             [class.is-invalid]="submitted && f['startingDate'].errors">
+                      <div *ngIf="submitted && f['startingDate'].errors" class="invalid-feedback">
+                        <div *ngIf="f['startingDate'].errors?.['required']">La date de début est requise</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="recruitmentDate" class="form-label">Date de Recrutement <span class="text-danger">*</span></label>
+                      <input type="date" 
+                             class="form-control" 
+                             id="recruitmentDate"
+                             formControlName="recruitmentDate"
+                             [class.is-invalid]="submitted && f['recruitmentDate'].errors">
+                      <div *ngIf="submitted && f['recruitmentDate'].errors" class="invalid-feedback">
+                        <div *ngIf="f['recruitmentDate'].errors?.['required']">La date de recrutement est requise</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Section: Sélections -->
+                  <div class="row mb-4 mt-5">
+                    <div class="col-12">
+                      <h5 class="text-primary border-bottom pb-2">
+                        <i class="fas fa-cogs me-2"></i>Affectations
+                      </h5>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
+                      <select class="form-select" 
+                              id="position"
+                              formControlName="position"
+                              [class.is-invalid]="submitted && f['position'].errors">
+                        <option value="">Sélectionner une position</option>
+                        <option *ngFor="let position of positions" [ngValue]="position">
+                          {{ position.title }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['position'].errors" class="invalid-feedback">
+                        <div *ngIf="f['position'].errors?.['required']">La position est requise</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="job" class="form-label">Poste <span class="text-danger">*</span></label>
+                      <select class="form-select" 
+                              id="job"
+                              formControlName="job"
+                              [class.is-invalid]="submitted && f['job'].errors">
+                        <option value="">Sélectionner un poste</option>
+                        <option *ngFor="let job of jobs" [ngValue]="job">
+                          {{ job.title }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['job'].errors" class="invalid-feedback">
+                        <div *ngIf="f['job'].errors?.['required']">Le poste est requis</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="harbor" class="form-label">Port <span class="text-danger">*</span></label>
+                      <select class="form-select" 
+                              id="harbor"
+                              formControlName="harbor"
+                              [class.is-invalid]="submitted && f['harbor'].errors">
+                        <option value="">Sélectionner un port</option>
+                        <option *ngFor="let harbor of harbors" [ngValue]="harbor">
+                          {{ harbor.name }} - {{ harbor.location }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['harbor'].errors" class="invalid-feedback">
+                        <div *ngIf="f['harbor'].errors?.['required']">Le port est requis</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="status" class="form-label">Statut <span class="text-danger">*</span></label>
+                      <select class="form-select" 
+                              id="status"
+                              formControlName="status"
+                              [class.is-invalid]="submitted && f['status'].errors">
+                        <option value="">Sélectionner un statut</option>
+                        <option *ngFor="let status of statuses" [ngValue]="status">
+                          {{ status.title }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['status'].errors" class="invalid-feedback">
+                        <div *ngIf="f['status'].errors?.['required']">Le statut est requis</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Section: Authentification -->
+                  <div class="row mb-4 mt-5">
+                    <div class="col-12">
+                      <h5 class="text-primary border-bottom pb-2">
+                        <i class="fas fa-lock me-2"></i>Informations de Connexion
+                      </h5>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="username" class="form-label">Nom d'utilisateur <span class="text-danger">*</span></label>
+                      <input type="text" 
+                             class="form-control" 
+                             id="username"
+                             formControlName="username"
+                             [class.is-invalid]="submitted && f['username'].errors">
+                      <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
+                        <div *ngIf="f['username'].errors?.['required']">Le nom d'utilisateur est requis</div>
+                        <div *ngIf="f['username'].errors?.['minlength']">Le nom d'utilisateur doit contenir au moins 3 caractères</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="role" class="form-label">Rôle <span class="text-danger">*</span></label>
+                      <select class="form-select" 
+                              id="role"
+                              formControlName="role"
+                              [class.is-invalid]="submitted && f['role'].errors">
+                        <option *ngFor="let role of roles" [value]="role">
+                          {{ role }}
+                        </option>
+                      </select>
+                      <div *ngIf="submitted && f['role'].errors" class="invalid-feedback">
+                        <div *ngIf="f['role'].errors?.['required']">Le rôle est requis</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="password" class="form-label">Mot de passe <span class="text-danger">*</span></label>
+                      <input type="password" 
+                             class="form-control" 
+                             id="password"
+                             formControlName="password"
+                             [class.is-invalid]="submitted && f['password'].errors">
+                      <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                        <div *ngIf="f['password'].errors?.['required']">Le mot de passe est requis</div>
+                        <div *ngIf="f['password'].errors?.['minlength']">Le mot de passe doit contenir au moins 6 caractères</div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label for="confirmPassword" class="form-label">Confirmer le mot de passe <span class="text-danger">*</span></label>
+                      <input type="password" 
+                             class="form-control" 
+                             id="confirmPassword"
+                             formControlName="confirmPassword"
+                             [class.is-invalid]="submitted && (f['confirmPassword'].errors || registrationForm.errors?.['passwordMismatch'])">
+                      <div *ngIf="submitted && (f['confirmPassword'].errors || registrationForm.errors?.['passwordMismatch'])" class="invalid-feedback">
+                        <div *ngIf="f['confirmPassword'].errors?.['required']">La confirmation du mot de passe est requise</div>
+                        <div *ngIf="f['confirmPassword'].errors?.['passwordMismatch'] || registrationForm.errors?.['passwordMismatch']">Les mots de passe ne correspondent pas</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Boutons d'action -->
+                  <div class="row mt-5">
+                    <div class="col-12">
+                      <div class="d-flex justify-content-between">
+                        <button type="button" 
+                                class="btn btn-secondary"
+                                (click)="navigateToUserList()">
+                          <i class="fas fa-arrow-left me-2"></i>
+                          Retour à la liste
+                        </button>
+                        
+                        <div>
+                          <button type="button" 
+                                  class="btn btn-outline-secondary me-2"
+                                  (click)="resetForm()">
+                            <i class="fas fa-undo me-2"></i>
+                            Réinitialiser
+                          </button>
+                          
+                          <button type="submit" 
+                                  class="btn btn-primary"
+                                  [disabled]="loading">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                            <i *ngIf="!loading" class="fas fa-save me-2"></i>
+                            {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

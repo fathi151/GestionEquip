@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+  
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+    
+    <!-- Sidebar Start -->
+ <app-layout></app-layout>
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Fournisseur</h2>
+    <p>Gérez les différents fournisseurs
+
+</p>
+  </div>
+<button class="add-user-btn" style="width: 200px;" (click)="openModal()">
+  <span class="icon">+</span>Nouveau fournisseur
+
+</button>
+</div>
+<div class="search-wrapper">
+  <div class="custom-search">
+    <input type="text" placeholder="Rechercher un type..." />
+    <span class="icon-search"></span>
+  </div>
+</div>
+<!-- Modal -->
+
+
+
+
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow rounded-4">
+      
+      <h5 id="updateModalLabel">📝 Modifier les informations</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+
+      <div class="modal-body">
+        <form #updateForm="ngForm">
+          <!-- Nom du type -->
+          <div class="mb-4">
+            <label for="nomFournisseur" class="form-label fw-semibold fs-5">Nom du type</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nomFournisseur"
+              name="nomFournisseur"
+              [(ngModel)]="fournisseur1.nomFournisseur"
+              #nomMarque="ngModel"
+              required
+              minlength="3"
+            />
+            <div *ngIf="nomMarque.invalid && nomMarque.touched" style="color:red">
+              <div *ngIf="nomMarque.errors?.['required']">Le nom de Marque est requis</div>
+              <div *ngIf="nomMarque.errors?.['minlength']">Le nom de marque doit contenir au moins 2 caractères</div>
+            </div>
+          </div>
+
+          <!-- Types disponibles -->
+          
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-success px-4" (click)="onUpdateClick(updateForm)">
+          💾 Sauvegarder
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<body class="bg-light">
+
+
+<div class="modal" [ngClass]="{'show': isModalOpen}" (click)="closeOnOutsideClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h3 style="font-size: 20px; margin-bottom: -10px;" >Ajouter un nouveau fournisseur</h3>
+<form [formGroup]="fournisseurForm" (ngSubmit)="onRegister()" novalidate>
+  <br><br>
+
+  <!-- 🧩 Model -->
+
+
+
+
+
+  <label for="numSerie" style="font-size: 14px; font-weight: 500; color: #000000;">Nom Fournisseur</label>
+  <input
+    class="form-inputp"
+    id="nomFournisseur"
+    type="text"
+    formControlName="nomFournisseur"
+    placeholder="Nom du Fournisseur"
+  />
+  <div *ngIf="fournisseurForm.get('nomFournisseur')?.invalid && (fournisseurForm.get('nomFournisseur')?.touched || submitted)" style="color:red">
+     Nom de Fournisseur est requis (min 3 caractères)
+  </div>
+     <label for="emailFournisseur" style="font-size: 14px; font-weight: 500; color: #000000;">Email</label>
+  <input
+    class="form-inputp"
+    id="emailFournisseur"
+    type="text"
+    formControlName="emailFournisseur"
+    placeholder="contact@fournisseur.com"
+  />
+  <div *ngIf="fournisseurForm.get('emailFournisseur')?.invalid && (fournisseurForm.get('emailFournisseur')?.touched || submitted)" style="color:red">
+Email est requis 
+  </div>
+
+
+
+     <label for="telephoneFournisseur" style="font-size: 14px; font-weight: 500; color: #000000;">Telephone</label>
+  <input
+    class="form-inputp"
+    id="telephoneFournisseur"
+    type="text"
+    formControlName="telephoneFournisseur"
+    placeholder="012345678"
+  />
+  <div *ngIf="fournisseurForm.get('telephoneFournisseur')?.invalid && (fournisseurForm.get('telephoneFournisseur')?.touched || submitted)" style="color:red">
+    Le numéro de téléphone est requis (min 4 caractères)
+  </div>
+  
+  <label for="adresseFournisseur" style="font-size: 14px; font-weight: 500; color: #000000;">Adresse</label>
+  <textarea
+    class="form-inputp"
+    id="adresseFournisseur"
+    type="text"
+    formControlName="adresseFournisseur"
+    placeholder="Adresse"
+  ></textarea>
+  <div *ngIf="fournisseurForm.get('adresseFournisseur')?.invalid && (fournisseurForm.get('adresseFournisseur')?.touched || submitted)" style="color:red">
+    Adesse est requis (min 4 caractères)
+  </div>
+
+  
+
+  <br />
+  <button type="submit"  class="btn btn-primary">
+    Enregistrer
+  </button>
+</form>
+
+
+  </div>
+</div>
+
+
+
+
+
+
+
+     <!-- Simple Notification Bar -->
+     <div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+       {{ notification.message }}
+     </div>
+
+     <!-- Tableau des fournisseurs -->
+     <div class="container-fluid">
+       <div class="row">
+         <div class="col-12">
+           <div class="card">
+             <div class="card-body">
+               <div class="table-responsive mt-4">
+                 <table class="table mb-0 text-nowrap varient-table align-middle fs-2 table-large">
+                   <thead>
+                     <tr>
+                       <th scope="col" class="px-3 text-muted">Nom du Fournisseur</th>
+                       <th scope="col" class="px-3 text-muted">Email</th>
+                       <th scope="col" class="px-3 text-muted">Téléphone</th>
+                       <th scope="col" class="px-3 text-muted">Adresse</th>
+                       <th scope="col" class="px-3 text-muted">Depuis</th>
+                       <th scope="col" class="px-3 text-muted text-end">Actions</th>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     <tr *ngFor="let fournisseur of fournisseurs">
+                       <!-- Nom du fournisseur -->
+                       <td class="px-3">
+                         <div>
+                           <h5 class="fw-bold mb-1 fs-3">{{ fournisseur.nomFournisseur }}</h5>
+                           <span class="fw-normal text-muted fs-4">Fournisseur</span>
+                         </div>
+                       </td>
+
+                       <!-- Email -->
+                       <td class="px-3">
+                         <span class="fw-normal fs-4">{{ fournisseur.emailFournisseur }}</span>
+                       </td>
+
+                       <!-- Téléphone -->
+                       <td class="px-3">
+                         <span class="fw-normal fs-4">{{ fournisseur.telephoneFournisseur }}</span>
+                       </td>
+
+                       <!-- Adresse -->
+                       <td class="px-3">
+                         <span class="fw-normal text-truncate fs-4"
+                               style="max-width: 300px; display: inline-block;"
+                               [title]="fournisseur.adresseFournisseur">
+                           {{ fournisseur.adresseFournisseur }}
+                         </span>
+                       </td>
+
+                       <!-- Date depuis -->
+                       <td class="px-3">
+                         <span class="fw-normal text-muted fs-4">12/01/2024</span>
+                       </td>
+
+                       <!-- Actions -->
+                       <td class="px-3 text-end">
+                         <div class="d-flex justify-content-end gap-2">
+                           <button
+                             class="btn btn-outline-primary btn-action"
+                             (click)="updateFournisseur(fournisseur)"
+                             title="Modifier">
+                             Modifier
+                           </button>
+                           <button
+                             class="btn btn-outline-danger btn-action"
+                             (click)="deleteFournisseur(fournisseur.idFournisseur)"
+                             title="Supprimer">
+                             Supprimer
+                           </button>
+                         </div>
+                       </td>
+                     </tr>
+                   </tbody>
+                 </table>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+
+<!-- MODAL -->
+
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+           
+
+
+
+
+       
+          </div>
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html><p>fournisseur works!</p>
