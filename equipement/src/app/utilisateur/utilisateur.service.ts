@@ -20,8 +20,9 @@ export interface NavigationItem {
   providedIn: 'root'
 })
 export class UtilisateurService {
-   private baseURL="/api/auth";
-  private baseURL1="/api/api/users";
+   private baseURL="http://localhost:8085/auth";
+  private baseURL1="http://localhost:8085/auth";
+
   constructor(private httpClient:HttpClient,private router: Router) {
 
 this.loadUserFromStorage();

@@ -3,11 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EtatEqui } from './Etat';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class EtatService {
-  private baseURL = "/api/equi";
+  private baseURL = "http://localhost:8085/equi";
+
 
   constructor(private httpClient: HttpClient) { }
 

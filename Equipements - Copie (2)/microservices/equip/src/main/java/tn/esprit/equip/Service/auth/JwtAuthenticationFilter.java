@@ -23,6 +23,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if (request.getRequestURI().startsWith("/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         System.out.println("JWT Filter - Processing request: " + request.getRequestURI());
 
         String jwtToken = extractTokenFromRequest(request);

@@ -65,16 +65,7 @@ public class AuthController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @ResponseBody
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody User agent ) {
-        agent.setPassword(passwordEncoder.encode(agent.getPassword()));
-        userRepository.save(agent);
-        Map<String, String> response = new HashMap<>();
-
-        response.put("message", "user registered successfully");
-        return ResponseEntity.ok(response);
-    }
+  
 
     @PostMapping("/login")
     public ResponseEntity<UserDTO> authenticate(@RequestBody User utl) {
@@ -124,6 +115,13 @@ public class AuthController {
     @GetMapping("/test")
     public String test() {
         return "message from backend successfully";
+    }
+
+    @PostMapping("/test-login")
+    public ResponseEntity<String> testLogin(@RequestBody Map<String, String> request) {
+        System.out.println("=== TEST LOGIN ENDPOINT CALLED ===");
+        System.out.println("Request body: " + request);
+        return ResponseEntity.ok("Test login endpoint working");
     }
     // 📌 Endpoint pour demander la réinitialisation du mot de passe
     @PostMapping("/forgot-password")

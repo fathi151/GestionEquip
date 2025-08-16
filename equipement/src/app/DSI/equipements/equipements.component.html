@@ -333,6 +333,11 @@
    <span *ngIf="equip.panne && (!successorStates[equip.idEqui] || successorStates[equip.idEqui].length === 0)"
          class="text-primary fw-normal">
      <i class="fas fa-info-circle"></i> Aucune action suivante
+     <button *ngIf="equip.panne?.etatActuel?.responsable === 'DSI'" 
+        class="btn btn-sm btn-outline-danger ms-1 py-0 px-2">
+  Terminer Process
+</button>
+
    </span>
 
    <!-- Message pour équipements sans panne -->

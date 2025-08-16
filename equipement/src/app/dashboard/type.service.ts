@@ -15,7 +15,7 @@ import { Historique } from '../equipement/Historique';
 })
 export class TypeService {
 
-private baseURL="/api/equi";
+private baseURL="http://localhost:8085/equi";
 
   constructor(private httpClient:HttpClient) { }
 

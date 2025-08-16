@@ -15,11 +15,13 @@ export class EtatComponent implements OnInit {
   searchText: string = '';
   notification = { show: false, message: '', type: '' };
   isLoading: boolean = false;
+  userRole: string | null = null;
 
   constructor(private etatService: EtatService) { }
 
   ngOnInit(): void {
     this.loadEtats();
+    this.userRole = sessionStorage.getItem('role');
   }
 
   loadEtats() {

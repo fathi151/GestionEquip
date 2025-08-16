@@ -28,11 +28,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatOptionModule } from '@angular/material/core';
 import { HistoriqueComponent } from './historique/historique.component';
 import { UserRegistrationComponent } from './user-registration/user-registration.component';
-import { EquipementsComponent } from './DSI/equipements/equipements.component';
+
 import { LayoutComponent } from './Shared/layout/layout.component';
 import { EquipDaGComponent } from './DAG/equip-da-g/equip-da-g.component';
 import { JuridiqueEquiComponent } from './Juridique/juridique-equi/juridique-equi.component';
 import { EtatComponent } from './etat/etat.component';
+import { EquipementsComponent } from './DSI/equipements/equipements.component';
+
 
 @NgModule({
   declarations: [
@@ -51,11 +53,15 @@ import { EtatComponent } from './etat/etat.component';
     HistoriqueComponent,
     AgentComponent,
     UserRegistrationComponent,
-    EquipementsComponent,
+    
     LayoutComponent,
     EquipDaGComponent,
     JuridiqueEquiComponent,
-    EtatComponent
+    EtatComponent,
+
+    EquipementsComponent
+
+  
   ],
   imports: [
     BrowserModule,

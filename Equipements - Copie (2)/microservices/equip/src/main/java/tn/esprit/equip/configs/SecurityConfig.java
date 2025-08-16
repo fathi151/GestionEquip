@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/api/users/**", "/images/**").permitAll()
+                        .requestMatchers("/auth/**", "/api/users/**", "/images/**", "/actuator/prometheus").permitAll()
 
 
                         .requestMatchers("/equi/**").hasAnyRole( "USER","ADMIN", "DSI", "DAG", "JURIDIQUE")
@@ -50,7 +50,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedOrigin("http://localhost");
+                configuration.addAllowedOrigin("http://localhost:80");
+                        configuration.addAllowedOrigin("http://localhost:4200");
+                                configuration.addAllowedOrigin("http://frontend:80");
         configuration.addAllowedMethod("*"); // GET, POST, PUT, DELETE, etc.
         configuration.addAllowedHeader("*"); // Autorise tous les headers
         configuration.setAllowCredentials(true); // Si tu utilises des cookies/sessions

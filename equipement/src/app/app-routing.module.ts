@@ -35,7 +35,7 @@ const routes: Routes = [
   {path:'reset-password', component:ResetPasswordComponent},
     {path:'DAGEquip', component:EquipDaGComponent},
     {path:'juridiqueEquip', component:JuridiqueEquiComponent},
-        {path:'etat', component:EtatComponent},
+    {path:'etat', component:EtatComponent},
 
   {path:'', redirectTo:'/dashboard', pathMatch:'full'}
 ];
