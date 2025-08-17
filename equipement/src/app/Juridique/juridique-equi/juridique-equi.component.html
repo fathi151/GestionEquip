@@ -375,6 +375,26 @@
   <!-- Modal de déclaration de panne -->
 
 
+  <!-- Transition modal: collect description before changing state -->
+  <div class="modal" [ngClass]="{'show': showTransitionModal}" (click)="cancelTransition()" *ngIf="showTransitionModal">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="cancelTransition()">&times;</span>
+      <h3>Confirmer la transition d'état</h3>
+      <p>Equipement: <strong>{{ transitionEquip?.numSerie }}</strong></p>
+      <p>Prochain état: <strong>{{ transitionNextState?.titre }}</strong></p>
+
+      <div class="form-group">
+        <label for="transitionDescription">Description (optionnel)</label>
+        <textarea id="transitionDescription" class="form-inputp" rows="4" [(ngModel)]="transitionDescription"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancelTransition()">Annuler</button>
+        <button type="button" class="btn-submit" (click)="confirmTransition()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
   <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="./assets/js/sidebarmenu.js"></script>

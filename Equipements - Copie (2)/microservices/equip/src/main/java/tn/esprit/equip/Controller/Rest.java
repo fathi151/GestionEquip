@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.List;
 
 import static tn.esprit.equip.Entity.Statut.AFFECTE;
@@ -432,27 +433,31 @@ return affectationRepo.findByEquipementInAndCerouEqualsOne(equipements);
 
 
     @PostMapping("/AjoutPanne")
-    public Panne addPanne(@RequestBody Panne panneData) {
-        Equipement equipement = equipRepo.findById(panneData.getEquipement().getIdEqui())
-                .orElseThrow(() -> new RuntimeException("Equipement not found"));
+    public Panne ajouterPanne(@RequestBody PanneRequest request) {
+        Equipement eq = equipRepo.findById(request.getEquipement()).orElseThrow();
+        EtatEqui etat = etatRepo.findById(request.getEtatActuel()).orElseThrow();
+
+        Panne panne = new Panne();
+        panne.setEquipement(eq);
+        panne.setEtatActuel(etat);
+        panne.setDate(request.getDate());
+        panne.setDescription(request.getDescription());
+        Panne panne1=panneRepo.save(panne);
+        eq.setPanne(panne);
+        equipRepo.save(eq);
 
 
-        panneData.setEquipement(equipement);
-        Panne savedPanne = panneRepo.save(panneData);
 
-
-        equipement.setPanne(savedPanne);
-        equipRepo.save(equipement);
-
-        return savedPanne;
+        return panne1;
     }
 
 
-    @PutMapping("/changerEtatPanne/{id}/{idEtat}")
-    public void changerEtatPanne(@PathVariable("id") Integer id,@PathVariable("idEtat") Integer idEtat) {
+    @PutMapping("/changerEtatPanne/{id}/{idEtat}/{description}")
+    public void changerEtatPanne(@PathVariable("id") Integer id,@PathVariable("idEtat") Integer idEtat,@PathVariable("description") String description) {
         Panne panne=panneRepo.findById(id).get();
 EtatEqui etat=etatRepo.findById(idEtat).get();
         panne.setEtatActuel(etat);
+        panne.setDescription(description);
         panneRepo.save(panne);
     }
 
@@ -474,10 +479,6 @@ EtatEqui etat=etatRepo.findById(idEtat).get();
 
                 equipRepo.save(equipement);
 
-
-                if (etatActuel != null) {
-                    etatRepo.deleteById(etatActuel.getId().intValue());
-                }
 
                 // Finally delete the panne
                 panneRepo.delete(panne);

@@ -408,9 +408,9 @@ annulerPanne(equipementId: number): Observable<any> {
 }
 
 
-changerEtatPanne(id: number, idE:number): Observable<any> {
+changerEtatPanne(id: number, idE:number,description:string): Observable<any> {
  return this.httpClient.put<any>(
-  `${this.baseURL}/changerEtatPanne/${id}/${idE}`,
+  `${this.baseURL}/changerEtatPanne/${id}/${idE}/${description}`,
   {},
   {
     headers: this.getAuthHeaders()

@@ -318,7 +318,7 @@
    <!-- Bouton pour passer à l'état suivant (seulement si c'est un état DSI) -->
    <button *ngIf="equip.panne?.etatActuel?.responsable==='DSI' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 "
             class="btn btn-sm btn-primary"
-            (click)="passerEtatSuivant(equip)"
+            (click)="openTransitionModal(equip, successorStates[equip.idEqui][0])"
             title="Passer à l'état suivant: {{ getNextState(equip) }}">
      Valider <i class="fas fa-arrow-right"></i> Suivant {{ getNextState(equip) }}
    </button>
@@ -326,15 +326,16 @@
    <!-- Message pour état suivant d'un autre département -->
    <span *ngIf="equip.panne?.etatActuel?.responsable!=='DSI' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 && successorStates[equip.idEqui][0].responsable !== 'DSI'"
          class="text-primary fw-normal">
-     <i class="fas fa-info-circle"></i> Prochain: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
+     <i class="fas fa-info-circle"></i> (Aucune action suivante) Prochain Etape: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
    </span>
 
    <!-- Message "Aucune action suivante" en bleu -->
    <span *ngIf="equip.panne && (!successorStates[equip.idEqui] || successorStates[equip.idEqui].length === 0)"
          class="text-primary fw-normal">
      <i class="fas fa-info-circle"></i> Aucune action suivante
-     <button *ngIf="equip.panne?.etatActuel?.responsable === 'DSI'" 
-        class="btn btn-sm btn-outline-danger ms-1 py-0 px-2">
+    <button *ngIf="equip.panne?.etatActuel?.responsable === 'DSI'" 
+       class="btn btn-sm btn-outline-danger ms-1 py-0 px-2"
+       (click)="annulerPanne(equip)" title="Terminer le processus et supprimer la panne">
   Terminer Process
 </button>
 
@@ -526,6 +527,23 @@
         <button type="submit" class="btn-submit" [disabled]="!panneForm.valid">Déclarer la panne</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal pour confirmer la transition (DSI) -->
+<div class="modal" [ngClass]="{'show': showTransitionModal}" (click)="cancelTransition()" *ngIf="showTransitionModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="cancelTransition()">&times;</span>
+    <h3>Confirmer la transition</h3>
+    <p>Passer l'équipement <strong>{{ transitionEquip?.model?.nomModel }} - {{ transitionEquip?.numSerie }}</strong> à l'état <strong>{{ transitionNextState?.titre }}</strong>.</p>
+    <div class="form-group">
+      <label>Description (optionnel)</label>
+      <textarea class="form-control" [(ngModel)]="transitionDescription" rows="3" placeholder="Entrez une description..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelTransition()">Annuler</button>
+      <button type="button" class="btn-submit" (click)="confirmTransition()">Confirmer</button>
+    </div>
   </div>
 </div>
 

@@ -96,6 +96,12 @@ successorStates: { [equipId: number]: any[] } = {};
 // Propriété pour suivre les états validés
 etatsValides: { [equipId: number]: boolean } = {};
 
+  // Transition modal state (collect description before changing state)
+  showTransitionModal: boolean = false;
+  transitionEquip: Equip | null = null;
+  transitionNextState: any = null;
+  transitionDescription: string = '';
+
 submitted = false;
 fournisseurs:Fournisseur[]=[];
   totalPages: any;
@@ -678,7 +684,7 @@ loadSuccessors(equipement: Equip): void {
   });
 }
 
-// Méthode pour passer à l'état suivant automatiquement
+// Méthode pour passer à l'état suivant (open modal to collect description)
 passerEtatSuivant(equipement: Equip): void {
   if (!equipement.panne || !equipement.panne.etatActuel) {
     return;
@@ -687,18 +693,48 @@ passerEtatSuivant(equipement: Equip): void {
   const successors = this.successorStates[equipement.idEqui];
   if (successors && successors.length > 0) {
     const nextState = successors[0];
-    console.log(nextState)
-    this.authservice.changerEtatPanne(equipement.panne.id, nextState.id).subscribe({
-      next: (response: any) => {
-        console.log('État changé avec succès:', response);
-        this.loadEquipements(this.currentPage);
-      },
-      error: (error: any) => {
-        console.error('Erreur lors du changement d\'état:', error);
-        this.showNotification('error', 'Erreur lors du changement d\'état');
-      }
-    });
+    // open modal to collect description before confirming transition
+    this.openTransitionModal(equipement, nextState);
   }
+}
+
+// Open transition modal
+openTransitionModal(equipement: Equip, nextState: any) {
+  this.transitionEquip = equipement;
+  this.transitionNextState = nextState;
+  this.transitionDescription = '';
+  this.showTransitionModal = true;
+}
+
+// Confirm transition
+confirmTransition() {
+  if (!this.transitionEquip || !this.transitionEquip.panne || !this.transitionNextState) return;
+  const panneId = this.transitionEquip.panne.id;
+  const nextStateId = this.transitionNextState.id;
+  const description = this.transitionDescription || '';
+
+  this.authservice.changerEtatPanne(panneId, nextStateId, description).subscribe({
+    next: (response: any) => {
+      this.showNotification('success', 'État changé avec succès');
+      this.showTransitionModal = false;
+      this.transitionEquip = null;
+      this.transitionNextState = null;
+      this.transitionDescription = '';
+      this.loadEquipements(this.currentPage);
+    },
+    error: (error: any) => {
+      console.error('Erreur lors du changement d\'état:', error);
+      this.showNotification('error', 'Erreur lors du changement d\'état');
+    }
+  });
+}
+
+// Cancel transition modal
+cancelTransition() {
+  this.showTransitionModal = false;
+  this.transitionEquip = null;
+  this.transitionNextState = null;
+  this.transitionDescription = '';
 }
 
 

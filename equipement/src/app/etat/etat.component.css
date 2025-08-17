@@ -1,0 +1,105 @@
+/* Modal overlay and content */
+.modal {
+	display: none; /* hidden by default */
+	position: fixed;
+	inset: 0; /* top:0; right:0; bottom:0; left:0; */
+	background: rgba(0, 0, 0, 0.45);
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	z-index: 1000;
+	transition: opacity 160ms ease-in-out;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.modal.show {
+	display: flex;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.modal-content {
+	background: #ffffff;
+	border-radius: 10px;
+	max-width: 640px;
+	width: 100%;
+	padding: 20px 22px;
+	box-shadow: 0 12px 30px rgba(2,6,23,0.12);
+	position: relative;
+	transform: translateY(-6px);
+	transition: transform 180ms ease, opacity 160ms ease;
+}
+
+.modal.show .modal-content {
+	transform: translateY(0);
+}
+
+.modal .close {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	background: transparent;
+	border: none;
+	color: #374151;
+}
+
+/* Form basics inside modal */
+.form-group {
+	margin-bottom: 12px;
+}
+
+.form-group label {
+	display: block;
+	font-size: 13px;
+	color: #334155;
+	margin-bottom: 6px;
+}
+
+.form-control {
+	width: 100%;
+	padding: 8px 10px;
+	border-radius: 8px;
+	border: 1px solid #e6eef9;
+	background: #fff;
+	box-sizing: border-box;
+}
+
+.form-actions {
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+	margin-top: 12px;
+}
+
+.btn-cancel {
+	background: transparent;
+	border: 1px solid #cbd5e1;
+	color: #334155;
+	padding: 8px 12px;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.btn-submit {
+	background: #0d6efd;
+	color: #fff;
+	border: none;
+	padding: 8px 14px;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.btn-submit[disabled] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* small responsive tweaks */
+@media (max-width: 520px) {
+	.modal-content { padding: 16px; }
+	.form-actions { flex-direction: column-reverse; align-items: stretch; }
+}

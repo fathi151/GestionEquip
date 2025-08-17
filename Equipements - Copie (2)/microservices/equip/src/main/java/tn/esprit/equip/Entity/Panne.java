@@ -27,6 +27,7 @@ public class Panne {
     private Date date;
 
     @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"panne", "affectations"})
     Equipement equipement;
 

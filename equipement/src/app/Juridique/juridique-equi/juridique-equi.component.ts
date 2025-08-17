@@ -98,6 +98,12 @@ export class JuridiqueEquiComponent {
   // Propriétés pour les états successeurs
   successorStates: { [equipId: number]: any[] } = {};
 
+  // Transition modal state for Juridique
+  showTransitionModal: boolean = false;
+  transitionEquip: Equip | null = null;
+  transitionNextState: any = null;
+  transitionDescription: string = '';
+
   submitted = false;
   fournisseurs:Fournisseur[]=[];
     totalPages: any;
@@ -651,7 +657,7 @@ onFileSelected(event: any) {
     return 'Aucun état suivant';
   }
 
-  // Méthode pour passer à l'état suivant automatiquement
+  // Méthode pour passer à l'état suivant (open modal to collect description)
   passerEtatSuivant(equipement: Equip): void {
     if (!equipement.panne || !equipement.panne.etatActuel) {
       return;
@@ -667,18 +673,45 @@ onFileSelected(event: any) {
         return;
       }
 
-      console.log('Transition JURIDIQUE vers:', nextState);
-      this.authservice.changerEtatPanne(equipement.panne.id, nextState.id).subscribe({
-        next: (response: any) => {
-          console.log('État changé avec succès:', response);
-          this.loadEquipements(this.currentPage);
-        },
-        error: (error: any) => {
-          console.error('Erreur lors du changement d\'état:', error);
-          this.showNotification('error', 'Erreur lors du changement d\'état');
-        }
-      });
+      // Open modal to collect description
+      this.openTransitionModal(equipement, nextState);
     }
+  }
+
+  openTransitionModal(equipement: Equip, nextState: any) {
+    this.transitionEquip = equipement;
+    this.transitionNextState = nextState;
+    this.transitionDescription = '';
+    this.showTransitionModal = true;
+  }
+
+  confirmTransition() {
+    if (!this.transitionEquip || !this.transitionEquip.panne || !this.transitionNextState) return;
+    const panneId = this.transitionEquip.panne.id;
+    const nextStateId = this.transitionNextState.id;
+    const description = this.transitionDescription || '';
+
+    this.authservice.changerEtatPanne(panneId, nextStateId, description).subscribe({
+      next: (response: any) => {
+        this.showNotification('success', 'État changé avec succès');
+        this.showTransitionModal = false;
+        this.transitionEquip = null;
+        this.transitionNextState = null;
+        this.transitionDescription = '';
+        this.loadEquipements(this.currentPage);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du changement d\'état:', error);
+        this.showNotification('error', 'Erreur lors du changement d\'état');
+      }
+    });
+  }
+
+  cancelTransition() {
+    this.showTransitionModal = false;
+    this.transitionEquip = null;
+    this.transitionNextState = null;
+    this.transitionDescription = '';
   }
 
 

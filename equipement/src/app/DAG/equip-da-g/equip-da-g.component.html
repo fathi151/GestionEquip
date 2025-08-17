@@ -312,13 +312,19 @@
    <!-- Message pour état suivant d'un autre département -->
    <span *ngIf="equip.panne?.etatActuel?.responsable!=='DAG' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 && successorStates[equip.idEqui][0].responsable !== 'DSI'"
          class="text-primary fw-normal">
-     <i class="fas fa-info-circle"></i> Prochain: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
+         <i class="fas fa-info-circle"></i> Prochain: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
    </span>
 
    <!-- Message "Aucune action suivante" en bleu -->
    <span *ngIf="equip.panne && (!successorStates[equip.idEqui] || successorStates[equip.idEqui].length === 0)"
          class="text-primary fw-normal">
      <i class="fas fa-info-circle"></i> Aucune action suivante
+    <button *ngIf="equip.panne?.etatActuel?.responsable === 'DAG'" 
+       class="btn btn-sm btn-outline-danger ms-1 py-0 px-2"
+       (click)="annulerPanne(equip)" title="Terminer le processus et supprimer la panne">
+  Terminer Process
+</button>
+
    </span>
 
    <!-- Message pour équipements sans panne -->
@@ -426,6 +432,26 @@
           <button type="submit" class="btn-submit" [disabled]="panneForm.invalid">Déclarer la panne</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Transition modal: collect description before changing state -->
+  <div class="modal" [ngClass]="{'show': showTransitionModal}" (click)="cancelTransition()" *ngIf="showTransitionModal">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="cancelTransition()">&times;</span>
+      <h3>Confirmer la transition d'état</h3>
+      <p>Equipement: <strong>{{ transitionEquip?.numSerie }}</strong></p>
+      <p>Prochain état: <strong>{{ transitionNextState?.titre }}</strong></p>
+
+      <div class="form-group">
+        <label for="transitionDescription">Description (optionnel)</label>
+        <textarea id="transitionDescription" class="form-inputp" rows="4" [(ngModel)]="transitionDescription"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancelTransition()">Annuler</button>
+        <button type="button" class="btn-submit" (click)="confirmTransition()">Confirmer</button>
+      </div>
     </div>
   </div>
 

@@ -114,6 +114,11 @@ fournisseurs:Fournisseur[]=[];
   utilisateurCtrl = new FormControl();
   utilisateurSearchCtrl = new FormControl();
   modelCtrl = new FormControl();
+  // Transition modal state for DSI: collect description before passing to next state
+  showTransitionModal: boolean = false;
+  transitionEquip: Equip | null = null;
+  transitionNextState: any = null;
+  transitionDescription: string = '';
 constructor(
   private authservice:TypeService,
   private http:HttpClient,
@@ -294,13 +299,14 @@ closeProcessModal() {
 
 onSubmitProcess() {
   if (this.processForm.valid) {
-    const processData = {
-      equipement: this.processForm.get('equipement')?.value,
-      etatActuel: this.processForm.get('etat')?.value,
-      date: this.processForm.get('date')?.value,
-      description: this.processForm.get('commentaire')?.value
-    };
+const processData = {
+  equipement: this.processForm.get('equipement')?.value.idEqui ,
+  etatActuel: this.processForm.get('etat')?.value.id ,
+  date: this.processForm.get('date')?.value,
+  description: this.processForm.get('commentaire')?.value
+};
 
+console.log('Process data:', processData);
        this.authservice.declarerPanne(processData).subscribe({
         next: (response: any) => {
           console.log('Panne déclarée avec succès:', response);
@@ -760,10 +766,33 @@ passerEtatSuivant(equipement: Equip): void {
   const successors = this.successorStates[equipement.idEqui];
   if (successors && successors.length > 0) {
     const nextState = successors[0];
-    console.log(nextState)
-    this.authservice.changerEtatPanne(equipement.panne.id, nextState.id).subscribe({
+      // default behavior: open modal to collect description before confirming
+      this.openTransitionModal(equipement, nextState);
+  }
+}
+
+  // Open modal to ask for a description before transitioning state
+  openTransitionModal(equipement: Equip, nextState: any) {
+    this.transitionEquip = equipement;
+    this.transitionNextState = nextState;
+    this.transitionDescription = '';
+    this.showTransitionModal = true;
+  }
+
+  // Confirm transition: call service with description
+  confirmTransition() {
+    if (!this.transitionEquip || !this.transitionEquip.panne || !this.transitionNextState) return;
+    const panneId = this.transitionEquip.panne.id;
+    const nextStateId = this.transitionNextState.id;
+    const description = this.transitionDescription || '';
+
+    this.authservice.changerEtatPanne(panneId, nextStateId, description).subscribe({
       next: (response: any) => {
-        console.log('État changé avec succès:', response);
+        this.showNotification('success', 'État changé avec succès');
+        this.showTransitionModal = false;
+        this.transitionEquip = null;
+        this.transitionNextState = null;
+        this.transitionDescription = '';
         this.loadEquipements(this.currentPage);
       },
       error: (error: any) => {
@@ -772,7 +801,13 @@ passerEtatSuivant(equipement: Equip): void {
       }
     });
   }
-}
+
+  cancelTransition() {
+    this.showTransitionModal = false;
+    this.transitionEquip = null;
+    this.transitionNextState = null;
+    this.transitionDescription = '';
+  }
 
 
 
