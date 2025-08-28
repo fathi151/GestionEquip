@@ -18,4 +18,5 @@ public class PanneRequest {
     private String description;
     private Integer idDossier;
     private Boolean forceNewDossier;
+    private String nomExecuteur;
 }

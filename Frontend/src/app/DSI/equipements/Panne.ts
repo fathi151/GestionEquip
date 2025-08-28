@@ -11,6 +11,7 @@ equipement!:Equip;
 etatActuel!:EtatEqui|null;
 dossier!:Dossier|null;
 end!:number;
+nomExecuteur!:string;
 
 
 

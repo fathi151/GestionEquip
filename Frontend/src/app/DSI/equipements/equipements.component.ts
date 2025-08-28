@@ -115,6 +115,8 @@ filteredEquipementsDSI: Equip[] = [];
 defaultEtats: EtatEqui[] = [];
 equipementProcessCtrl = new FormControl();
 
+nameIdentifier: string | null = null;
+
 submitted = false;
 fournisseurs:Fournisseur[]=[];
   totalPages: any;
@@ -150,8 +152,14 @@ constructor(
     date:[new Date(),Validators.required]
   });
 }
+
+
   ngOnInit(): void {
       this.currentPage = 0;
+
+
+this.nameIdentifier=sessionStorage.getItem('username');
+
 
     this.GetAllModels();
     this.loadEquipements(this.currentPage);
@@ -324,7 +332,8 @@ const processData = {
   equipement: this.processForm.get('equipement')?.value.idEqui ,
   etatActuel: this.processForm.get('etat')?.value.id ,
   date: this.processForm.get('date')?.value,
-  description: this.processForm.get('commentaire')?.value
+  description: this.processForm.get('commentaire')?.value,
+  nomExecuteur:this.nameIdentifier
 };
 
 console.log('Process data:', processData);

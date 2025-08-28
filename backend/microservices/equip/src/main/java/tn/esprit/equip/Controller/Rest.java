@@ -478,6 +478,7 @@ return affectationRepo.findByEquipementInAndCerouEqualsOne(equipements);
         panne.setEtatActuel(etat);
         panne.setDate(request.getDate());
         panne.setDescription(request.getDescription());
+        panne.setNomExecuteur(request.getNomExecuteur());
         panne.setEnd(0);
     if (dossierToUse != null) panne.setDossier(dossierToUse);
 

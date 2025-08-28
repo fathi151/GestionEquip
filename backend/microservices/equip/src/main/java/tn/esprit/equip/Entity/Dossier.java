@@ -22,6 +22,7 @@ public class Dossier {
   String dossierNom;
 
 
+
   Date dateCreation;
   @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @com.fasterxml.jackson.annotation.JsonManagedReference

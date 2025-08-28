@@ -23,6 +23,7 @@ public class Panne {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+String nomExecuteur;
 
     private String description;
     private Date date;

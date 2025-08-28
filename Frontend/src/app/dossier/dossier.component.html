@@ -4,15 +4,23 @@
 		<button class="btn btn-sm btn-outline-secondary" (click)="loadDossiers()">Rafraîchir</button>
 	</div>
 
+	<!-- Labels to filter dossiers -->
+	<div class="dossier-labels my-2">
+		<button class="btn btn-sm" [ngClass]="{'btn-primary': selectedLabel==='all', 'btn-outline-primary': selectedLabel!=='all'}" (click)="setLabel('all')">Tous ({{ dossiers.length || 0 }})</button>
+		<button class="btn btn-sm ms-2" [ngClass]="{'btn-primary': selectedLabel==='inprogress', 'btn-outline-primary': selectedLabel!=='inprogress'}" (click)="setLabel('inprogress')">En cours ({{ countDossiersInProgress() }})</button>
+		<button class="btn btn-sm ms-2" [ngClass]="{'btn-primary': selectedLabel==='terminated', 'btn-outline-primary': selectedLabel!=='terminated'}" (click)="setLabel('terminated')">Terminés ({{ countDossiersTerminated() }})</button>
+	</div>
+
 	<div *ngIf="loading" class="text-center">Chargement...</div>
 
 	<div class="dossier-grid">
-		<div class="dossier-card" *ngFor="let d of dossiers" (click)="openDossier(d)">
+		<div class="dossier-card" *ngFor="let d of getFilteredDossiers()" (click)="openDossier(d)">
 			<div class="envelope">
 				<div class="flap"></div>
 				<div class="body">
 					<div class="title">{{ d.dossierNom || ('Dossier ' + d.id) }}</div>
 					<div class="meta">{{ d.dateCreation | date:'dd/MM/yyyy HH:mm' }}</div>
+				
 				</div>
 			</div>
 		</div>
@@ -31,15 +39,20 @@
 			<h5>Pannes ({{ selectedDossier.pannes?.length || 0 }})</h5>
 			<div *ngIf="!selectedDossier.pannes || selectedDossier.pannes.length===0">Aucune panne pour ce dossier.</div>
 			<ul class="list-group">
-				<li class="list-group-item" *ngFor="let p of selectedDossier.pannes">
+				<li class="list-group-item" *ngFor="let p of selectedDossier.pannes" [ngClass]="{'active': selectedPanneId===p.id}" (click)="selectPanne(p)">
 					<div class="d-flex justify-content-between">
 						<div>
 							<strong>{{ p.etatActuel?.titre || p.etatActuel }}</strong>
 							<div class="text-muted small">{{ p.date | date:'dd/MM/yyyy HH:mm' }}</div>
 							<div>{{ p.description }}</div>
+							<!-- Show responsable if available -->
+							<div class="text-muted small mt-1">Responsable: {{ p.etatActuel?.responsable || p.responsable || '—' }}</div>
+							<div>Executeur: {{ p.nomExecuteur }}</div>
 						</div>
 						<div class="text-end">
 							<span class="badge bg-primary">{{ p.end === 0 ? 'En cours' : 'Terminé' }}</span>
+						
+							<!-- Manual validate button removed: validation now occurs automatically when switching steps -->
 						</div>
 					</div>
 				</li>

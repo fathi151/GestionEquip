@@ -18,60 +18,132 @@ export class EtatComponent implements OnInit {
   userRole: string | null = null;
   // Workflow creation state
   showWorkflowModal: boolean = false;
-  workflowSteps: Array<{ titre: string; responsable: string }> = [];
+  workflowSteps: Array<{ titre: string; responsable: string; id?: number }> = [];
+  isEditingProcess: boolean = false;
+  editingProcessOriginalIds: number[] = [];
   workflowSubmitting: boolean = false;
+  editingProcessSubmitting: boolean = false;
 
-  constructor(private etatService: EtatService) { }
+  constructor(private etatService: EtatService) {}
 
   ngOnInit(): void {
     this.loadEtats();
-    this.userRole = sessionStorage.getItem('role');
   }
 
+  // Utility sleep
+  sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Load all etats
   loadEtats() {
-    this.isLoading = true;
-    this.etatService.getEtatList().subscribe(
-      data => {
-        this.etats = data;
-        this.isLoading = false;
-      },
-      error => {
-        console.error('Error loading etats:', error);
-        this.showNotification('Erreur lors du chargement des états', 'error');
-        this.isLoading = false;
-      }
-    );
+    this.etatService.getEtatList().subscribe((data: EtatEqui[]) => {
+      this.etats = data || [];
+    }, (err) => {
+      console.error('Failed to load etats', err);
+    });
   }
 
-  openModal() {
-    this.isModalOpen = true;
-    this.currentEtat = new EtatEqui();
-    this.editingEtat = null;
-  }
-
-  // Workflow modal helpers
   openWorkflowModal() {
     this.showWorkflowModal = true;
-    this.workflowSteps = [ { titre: '', responsable: '' } ];
+    this.workflowSteps = [{ titre: '', responsable: '' }];
+    this.isEditingProcess = false;
+    this.editingProcessOriginalIds = [];
   }
 
   closeWorkflowModal() {
     this.showWorkflowModal = false;
     this.workflowSteps = [];
+    this.isEditingProcess = false;
+    this.editingProcessOriginalIds = [];
+    this.workflowSubmitting = false;
+    this.editingProcessSubmitting = false;
   }
 
-  addWorkflowStep() {
-    this.workflowSteps.push({ titre: '', responsable: '' });
+  openEditProcess(sequence: EtatEqui[]) {
+    this.showWorkflowModal = true;
+    this.isEditingProcess = true;
+    this.workflowSteps = sequence.map(s => ({ titre: s.titre, responsable: s.responsable, id: (s as any).id }));
+    this.editingProcessOriginalIds = sequence.map(s => (s as any).id).filter(id => id != null);
   }
 
-  removeWorkflowStep(index: number) {
-    if (this.workflowSteps.length > 1) this.workflowSteps.splice(index, 1);
-  }
+  // Destructive replace strategy: delete the old process first, then recreate the edited sequence.
+  async submitProcessEdit() {
+    if (this.workflowSteps.length === 0) return;
 
-  // Insert a new step after the given index (so it appears between steps)
-  insertWorkflowStep(index: number) {
-    const insertAt = Math.max(0, Math.min(index + 1, this.workflowSteps.length));
-    this.workflowSteps.splice(insertAt, 0, { titre: '', responsable: '' });
+    for (let i = 0; i < this.workflowSteps.length; i++) {
+      const s = this.workflowSteps[i] as any;
+      if (!s.titre || !s.responsable) {
+        this.showNotification('Veuillez remplir tous les champs du processus', 'error');
+        return;
+      }
+    }
+
+    if (!this.editingProcessOriginalIds || this.editingProcessOriginalIds.length === 0) {
+      // fallback: if we don't have originals, treat as normal create
+      await this.submitWorkflow();
+      return;
+    }
+
+    this.editingProcessSubmitting = true;
+    try {
+      // Step A: delete original process states (reverse order)
+      const originals = [...this.editingProcessOriginalIds].filter(id => id != null).sort((a, b) => b - a);
+      for (const id of originals) {
+        let attempts = 0;
+        let deleted = false;
+        while (attempts < 3 && !deleted) {
+          attempts++;
+          try {
+            await new Promise((resolve, reject) => {
+              this.etatService.deleteEtat(id).subscribe({ next: () => resolve(null), error: (e) => reject(e) });
+            });
+            deleted = true;
+            await this.sleep(120);
+            this.loadEtats();
+            await this.sleep(80);
+          } catch (err) {
+            await this.sleep(150);
+            this.loadEtats();
+            await this.sleep(120);
+          }
+        }
+        if (!deleted) {
+          this.showNotification('Impossible de supprimer complètement l\'ancien processus. Abandon.', 'error');
+          this.editingProcessSubmitting = false;
+          return;
+        }
+      }
+
+      // Step B: create new sequence from workflowSteps sequentially (link precedents)
+      let previousCreatedId: number | null = null;
+      for (const step of this.workflowSteps as any[]) {
+        const payload: any = { titre: step.titre, responsable: step.responsable };
+        if (previousCreatedId) payload.precedent = { id: previousCreatedId };
+
+        const created: any = await new Promise((resolve, reject) => {
+          this.etatService.createEtat(payload).subscribe({ next: (res: any) => resolve(res), error: (e) => reject(e) });
+        });
+
+        const createdId = (created && created.id) ? created.id : (created as any);
+        previousCreatedId = createdId;
+        // small pause and refresh
+        await this.sleep(120);
+        this.loadEtats();
+        await this.sleep(60);
+      }
+
+      this.showNotification('Processus remplacé avec succès', 'success');
+      this.closeWorkflowModal();
+      this.loadEtats();
+    } catch (err: any) {
+      console.error('Erreur lors de la substitution du processus:', err);
+      this.showNotification('Erreur lors de la substitution du processus', 'error');
+    } finally {
+      this.editingProcessSubmitting = false;
+      this.isEditingProcess = false;
+      this.editingProcessOriginalIds = [];
+    }
   }
 
   // Submit all steps sequentially; link precedent of step i+1 to created step i
@@ -124,10 +196,59 @@ export class EtatComponent implements OnInit {
     }
   }
 
+  // Delete an entire process (sequence) by deleting each Etat in it sequentially
+  async deleteProcess(sequence: EtatEqui[]) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce processus et tous ses états ? Cette action est irréversible.')) return;
+
+    this.isLoading = true;
+    // delete from end to start to avoid foreign-key / precedent reference issues
+    for (let i = sequence.length - 1; i >= 0; i--) {
+      const etat = sequence[i];
+      const id = (etat as any).id;
+      if (id == null) continue;
+      try {
+        await new Promise((resolve, reject) => {
+          this.etatService.deleteEtat(id).subscribe({ next: () => resolve(null), error: (e) => reject(e) });
+        });
+      } catch (err: any) {
+        console.error('Error deleting etat in process deletion', err);
+        let errorMessage = 'Erreur lors de la suppression du processus';
+        if (err.status === 403) errorMessage = 'Vous n\'avez pas les permissions pour supprimer cet état';
+        this.showNotification(errorMessage, 'error');
+        this.isLoading = false;
+        return;
+      }
+    }
+
+    this.showNotification('Processus supprimé avec succès', 'success');
+    this.loadEtats();
+    this.isLoading = false;
+  }
+
+  addWorkflowStep() {
+    this.workflowSteps.push({ titre: '', responsable: '' });
+  }
+
+  removeWorkflowStep(index: number) {
+    if (this.workflowSteps.length > 1) this.workflowSteps.splice(index, 1);
+  }
+
+  // Insert a new step after the given index (so it appears between steps)
+  insertWorkflowStep(index: number) {
+    const insertAt = Math.max(0, Math.min(index + 1, this.workflowSteps.length));
+    this.workflowSteps.splice(insertAt, 0, { titre: '', responsable: '' });
+  }
+
   closeModal() {
     this.isModalOpen = false;
     this.editingEtat = null;
     this.currentEtat = new EtatEqui();
+  }
+
+  openModal() {
+    this.editingEtat = null;
+    this.currentEtat = new EtatEqui();
+    this.isModalOpen = true;
   }
 
   onSubmit() {

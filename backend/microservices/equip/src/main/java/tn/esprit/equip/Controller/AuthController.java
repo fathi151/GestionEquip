@@ -83,6 +83,7 @@ public class AuthController {
 
         // Récupération du rôle utilisateur
         String role = userService.getUserRoleByUsername(utl.getRegistrationNumber());
+        String username =userService.getUserUsername(utl.getRegistrationNumber());
 
         // Création des autorités à partir du rôle (avec le préfixe "ROLE_")
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
@@ -102,6 +103,7 @@ public class AuthController {
         userDTO.setRegistrationNumber(userId);
         userDTO.setRole(role);
         userDTO.setEmail(utl.getEmail());
+        userDTO.setUsername(username);
         return ResponseEntity.ok(userDTO);
     }
 

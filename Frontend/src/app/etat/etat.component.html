@@ -197,7 +197,7 @@
           <div class="modal" [ngClass]="{'show': showWorkflowModal}" (click)="closeWorkflowModal()" *ngIf="showWorkflowModal">
             <div class="modal-content modal-large" (click)="$event.stopPropagation()">
               <span class="close" (click)="closeWorkflowModal()">&times;</span>
-              <h3>Créer un nouveau processus (workflow)</h3>
+              <h3>{{ isEditingProcess ? 'Modifier le processus' : 'Créer un nouveau processus (workflow)' }}</h3>
 
               <div class="workflow-steps-scroll" role="list">
                 <ng-container *ngFor="let step of workflowSteps; let i = index">
@@ -225,7 +225,9 @@
 
               <div class="form-actions mt-3 d-flex justify-content-end gap-2">
                 <button type="button" class="btn-cancel" (click)="closeWorkflowModal()">Annuler</button>
-                <button type="button" class="btn-submit" (click)="submitWorkflow()" [disabled]="workflowSubmitting">{{ workflowSubmitting ? 'Création...' : 'Créer le processus' }}</button>
+                <button type="button" class="btn-submit" (click)="isEditingProcess ? submitProcessEdit() : submitWorkflow()" [disabled]="isEditingProcess ? editingProcessSubmitting : workflowSubmitting">
+                  {{ (isEditingProcess ? editingProcessSubmitting : workflowSubmitting) ? (isEditingProcess ? 'Mise à jour...' : 'Création...') : (isEditingProcess ? 'Mettre à jour le processus' : 'Créer le processus') }}
+                </button>
               </div>
             </div>
           </div>
@@ -264,8 +266,16 @@
                   <!-- En-tête de séquence -->
                   <tr class="sequence-header">
                     <td colspan="4">
-                      <strong>Processus {{ sequenceIndex + 1 }}</strong>
-                      ({{ sequence.length }} etat{{ sequence.length > 1 ? 's' : '' }})
+                      <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div>
+                          <strong>Processus {{ sequenceIndex + 1 }}</strong>
+                          ({{ sequence.length }} etat{{ sequence.length > 1 ? 's' : '' }})
+                        </div>
+                        <div class="process-actions">
+                          <button class="btn btn-sm btn-outline-primary me-1" title="Éditer le processus" (click)="openEditProcess(sequence)">✏️ Editer Processus</button>
+                          <button class="btn btn-sm btn-outline-danger" title="Supprimer le processus" (click)="deleteProcess(sequence)">🗑️ Supprimer Processus</button>
+                        </div>
+                      </div>
                     </td>
                   </tr>
 

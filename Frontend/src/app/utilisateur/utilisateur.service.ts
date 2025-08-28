@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 export interface LoginRequest {
   registrationNumber: string;
   password: string;
+  
 }
 export interface NavigationItem {
   id: string;
@@ -36,6 +37,7 @@ user: Utilisateur = new Utilisateur();
   private currentUserSubject = new BehaviorSubject<Utilisateur | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
+
   login(loginRequest: LoginRequest): Observable<any> {
     return this.httpClient.post<any>(`${this.baseURL}/login`, loginRequest)
        .pipe(
@@ -47,6 +49,7 @@ user: Utilisateur = new Utilisateur();
             sessionStorage.setItem('registrationNumber', user.registrationNumber);
             sessionStorage.setItem('role', user.role);
             sessionStorage.setItem('email', user.email);
+            console.log('User logged in:', user);
 
             // Update current user subject
             this.currentUserSubject.next(user);
