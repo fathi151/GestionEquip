@@ -1,0 +1,49 @@
+<div class="dossier-wrapper">
+	<div class="dossier-header d-flex justify-content-between align-items-center">
+		<h3>Dossiers</h3>
+		<button class="btn btn-sm btn-outline-secondary" (click)="loadDossiers()">Rafraîchir</button>
+	</div>
+
+	<div *ngIf="loading" class="text-center">Chargement...</div>
+
+	<div class="dossier-grid">
+		<div class="dossier-card" *ngFor="let d of dossiers" (click)="openDossier(d)">
+			<div class="envelope">
+				<div class="flap"></div>
+				<div class="body">
+					<div class="title">{{ d.dossierNom || ('Dossier ' + d.id) }}</div>
+					<div class="meta">{{ d.dateCreation | date:'dd/MM/yyyy HH:mm' }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="selectedDossier" class="dossier-panel">
+		<div class="panel-header d-flex justify-content-between align-items-center">
+			<div>
+				<h4>{{ selectedDossier.dossierNom }}</h4>
+				<small class="text-muted">Créé le {{ selectedDossier.dateCreation | date:'dd/MM/yyyy HH:mm' }}</small>
+			</div>
+			<button class="btn btn-sm btn-outline-secondary" (click)="close()">Fermer</button>
+		</div>
+
+		<div class="panel-body mt-3">
+			<h5>Pannes ({{ selectedDossier.pannes?.length || 0 }})</h5>
+			<div *ngIf="!selectedDossier.pannes || selectedDossier.pannes.length===0">Aucune panne pour ce dossier.</div>
+			<ul class="list-group">
+				<li class="list-group-item" *ngFor="let p of selectedDossier.pannes">
+					<div class="d-flex justify-content-between">
+						<div>
+							<strong>{{ p.etatActuel?.titre || p.etatActuel }}</strong>
+							<div class="text-muted small">{{ p.date | date:'dd/MM/yyyy HH:mm' }}</div>
+							<div>{{ p.description }}</div>
+						</div>
+						<div class="text-end">
+							<span class="badge bg-primary">{{ p.end === 0 ? 'En cours' : 'Terminé' }}</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

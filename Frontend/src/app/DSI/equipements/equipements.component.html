@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flexy Free Bootstrap Admin Template by WrapPixel</title>
+
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+
+    <!--  App Topstrip -->
+
+    <!-- Sidebar Start -->
+<app-layout></app-layout>
+
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <!--  Header Start -->
+      <header class="app-header">
+
+      </header>
+      <!--  Header End -->
+      <div class="body-wrapper-inner">
+        <div class="container-fluid">
+                <div class="welcome-header">
+  <h1>Bienvenue dans votre espace</h1>
+  <p>Gérez efficacement vos activités académiques depuis ce tableau de bord</p>
+
+</div>
+<!-- Bouton pour ouvrir la modale -->
+
+<div class="header-container">
+  <div class="header-text">
+    <h2>Équipements</h2>
+    <p>Gérez les différents types d'équipements informatiques
+
+</p>
+  </div>
+
+</div>
+
+<!-- Formulaire de recherche simple -->
+<div class="card mt-3 mb-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Recherche par utilisateur et statut</h5>
+
+    <div class="row g-3">
+      <!-- Recherche par utilisateur -->
+      <div class="col-md-6">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Utilisateur</mat-label>
+          <input
+            type="text"
+            matInput
+            [formControl]="utilisateurSearchCtrl"
+            [matAutocomplete]="autoUserSearch"
+            placeholder="Rechercher un utilisateur...">
+
+          <mat-autocomplete
+            #autoUserSearch="matAutocomplete"
+            [displayWith]="displayUtilisateur"
+            (optionSelected)="onUserSearchSelected($event.option.value)">
+            <mat-option *ngFor="let user of filteredUtilisateursSearch" [value]="user">
+              {{ user.firstName }} {{ user.lastName }} - {{ user.registrationNumber }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Recherche par statut -->
+
+</div>
+  </div>
+</div>
+
+<div class="search-wrapper">
+  <div class="custom-search">
+    <input
+      type="text"
+      placeholder="Rechercher un equipement..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+      class="form-control"
+    />
+    <span class="icon-search"></span>
+  </div>
+</div>
+
+
+
+
+
+</div>
+<!-- Modal -->
+
+<!-- Modal de modification -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+    .card-custom {
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .btn-outline-lightblue {
+      border: 1px solid #cfe2ff;
+      color: #0d6efd;
+      background-color: #e7f1ff;
+    }
+
+    .tag {
+      background-color: #e7f1ff;
+      color: #0d6efd;
+      padding: 3px 10px;
+      font-size: 0.8rem;
+      border-radius: 15px;
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+
+.icon-box {
+  font-size: 48px; /* optional - for icon size */
+  width: 100px;     /* increase width */
+  height: 100px;    /* set height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d6efd;
+  margin-right: 10px;
+ border-radius: 0% !important;
+}
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+.card-custom {
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background-color: #fff;
+  color: #212529; /* Darker text */
+  font-size: 0.95rem; /* Slightly larger base font */
+}
+
+.card-custom strong {
+  font-weight: 600; /* Heavier for labels */
+  color: #1a1a1a;
+}
+
+.card-custom h5 {
+  font-weight: 600;
+  color: #000;
+}
+
+.card-custom small,
+.text-muted {
+  color: #495057 !important; /* Less faded gray */
+}
+
+.icon-box {
+  font-size: 32px;
+  color: #0d6efd;
+  margin-right: 10px;
+}
+
+.tag {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border-radius: 15px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+
+
+  </style>
+
+<body class="bg-light">
+  <div class="container my-2">
+
+    <!-- Simple Notification Bar -->
+    <div *ngIf="notification.show" class="simple-notification" [ngClass]="notification.type">
+      {{ notification.message }}
+    </div>
+
+    <!-- Tableau des équipements -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <!-- Header avec bouton en haut à droite -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Liste des Équipements DSI</h5>
+                <div>
+                  <button class="btn btn-primary me-2" (click)="openProcessModal()">
+                    Déclencher Suivi Equipement
+                  </button>
+                  <button class="btn btn-outline-secondary" (click)="toggleDossier()">
+                    Voir Dossiers
+                  </button>
+                </div>
+              </div>
+              <!-- Dossier modal component -->
+              <div *ngIf="showDossierModal" class="mt-3">
+                <app-dossier></app-dossier>
+              </div>
+              <div class="table-responsive mt-1">
+                <table class="table mb-0 text-nowrap varient-table align-middle fs-3">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="px-0 text-muted">Image</th>
+                      <th scope="col" class="px-0 text-muted">Modèle</th>
+                      <th scope="col" class="px-0 text-muted">N° Série</th>
+                           <th scope="col" class="px-0 text-muted">Date Declaration</th>
+                      <th scope="col" class="px-0 text-muted">Statut</th>
+                      <th scope="col" class="px-0 text-muted">Etat</th>
+                     <th scope="col" class="px-0 text-muted text-end">Responsable</th>
+                       <th scope="col" class="px-0 text-muted text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let equip of equiements">
+                      <!-- Image -->
+                     <td class="px-1">
+  <img *ngIf="equip.image"
+       [src]="equip.image"
+       alt="Équipement"
+       class="rounded-circle img-fluid"
+       width="40" height="40"
+       (error)="equip.image = ''" />
+</td>
+
+
+                      <!-- Modèle -->
+                      <td class="px-1">
+                        <div class="ms-3">
+                          <h6 class="fw-semibold mb-0 fs-4">{{ equip.model?.nomModel }}</h6>
+                          <span class="fw-normal text-muted">Modèle</span>
+                        </div>
+                      </td>
+
+                      <!-- Numéro de série -->
+                      <td class="px-1">
+                        <span class="fw-normal">{{ equip.numSerie }}</span>
+                      </td>
+
+                      <!-- Date d'acquisition -->
+                      <td class="px-1">
+                        <span class="fw-normal">{{ equip.dateAffectation | date: 'dd/MM/yyyy' }}</span>
+                      </td>
+
+                      <!-- Statut -->
+                      <td class="px-1">
+                        <span class="badge rounded-pill"
+                              [style.background-color]="equip.statut === 'DISPONIBLE' ? '#28a745' : (equip.statut === 'AFFECTE' ? '#dc3545' : '#6c757d')"
+                              [style.color]="'white'">
+                          {{ equip.statut }}
+                        </span>
+                        <div *ngIf="equip.statut.toLowerCase() === 'affecte' || equip.statut.toLowerCase() === 'affecté'"
+                             class="text-muted small mt-1">
+                          Affecté à {{ NameUtilisateur[equip.idEqui] | uppercase }}
+                        </div>
+                      </td>
+                      <td class="px-1">
+                        <span class="fw-normal">{{ getEquipementEtat(equip) }}</span>
+                      </td>
+
+
+
+                      <!-- Responsable -->
+                     <td class="px-1 text-end">
+  <ng-container *ngIf="getLastPanne(equip) as lastPanne">
+    <ng-container *ngIf="lastPanne.end !== 1; else noResponsable">
+      <span class="fw-normal">{{ lastPanne.etatActuel?.responsable }}</span>
+    </ng-container>
+  </ng-container>
+  <ng-template #noResponsable>
+    <span class="fw-normal">Aucun responsable</span>
+  </ng-template>
+</td>
+
+
+                      <!-- Actions -->
+                      <td class="px-1 text-end">
+
+   <!-- Bouton pour passer à l'état suivant (seulement si c'est un état DSI) -->
+  <button *ngIf="getLastPanne(equip)?.etatActuel?.responsable==='DSI' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 "
+            class="btn btn-sm btn-primary"
+            (click)="openTransitionModal(equip, successorStates[equip.idEqui][0])"
+            title="Passer à l'état suivant: {{ getNextState(equip) }}">
+     Valider <i class="fas fa-arrow-right"></i> Suivant {{ getNextState(equip) }}
+   </button>
+
+   <!-- Message pour état suivant d'un autre département -->
+  <span *ngIf="getLastPanne(equip)?.etatActuel?.responsable!=='DSI' && successorStates[equip.idEqui] && successorStates[equip.idEqui].length > 0 && successorStates[equip.idEqui][0].responsable !== 'DSI'"
+         class="text-primary fw-normal">
+     <i class="fas fa-info-circle"></i> (Aucune action suivante) Prochain Etape: {{ getNextState(equip) }} ({{ successorStates[equip.idEqui][0].responsable }})
+   </span>
+
+   <!-- Message "Aucune action suivante" en bleu -->
+  <span *ngIf="getLastPanne(equip) && getLastPanne(equip)?.end !== 1 &&(!successorStates[equip.idEqui] || successorStates[equip.idEqui].length === 0)"
+         class="text-primary fw-normal">
+     <i class="fas fa-info-circle"></i> Aucune action suivante
+  <button *ngIf="getLastPanne(equip)?.etatActuel?.responsable === 'DSI'" 
+       class="btn btn-sm btn-outline-danger ms-1 py-0 px-2"
+       (click)="annulerPanne(equip)" title="Terminer le processus et supprimer la panne">
+  Terminer Process
+</button>
+
+   </span>
+
+   <!-- Message pour équipements sans panne -->
+<span *ngIf="!getLastPanne(equip) || getLastPanne(equip)?.end === 1"
+      class="text-muted fw-normal">
+  <i class="fas fa-check-circle"></i> Aucune action requise
+</span>
+
+                      </td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Pagination Bootstrap -->
+<nav class="mt-4 d-flex justify-content-center" *ngIf="totalPages > 1">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 0">
+      <a class="page-link" (click)="loadEquipements(currentPage - 1)">Précédent</a>
+    </li>
+
+    <li class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="i === currentPage">
+      <a class="page-link" (click)="loadEquipements(i)">{{ i + 1 }}</a>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <a class="page-link" (click)="loadEquipements(currentPage + 1)">Suivant</a>
+    </li>
+  </ul>
+</nav>
+
+  </div>
+</body>
+
+
+
+          <!--  Row 1 -->
+          <div class="row">
+
+          <div class="py-6 px-6 text-center">
+            <p class="mb-0 fs-4">Design and Developed by <a href="#"
+                class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de déclaration de panne -->
+
+
+<!-- Modal de processus -->
+<div class="modal" [ngClass]="{'show': showProcessModal}" (click)="closeProcessModal()" *ngIf="showProcessModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closeProcessModal()">&times;</span>
+    <h3>Déclencher un Processus</h3>
+    <form [formGroup]="processForm" (ngSubmit)="onSubmitProcess()">
+
+      <!-- Sélection d'équipement avec autocomplete -->
+      <div class="form-group">
+        <label for="equipement">Équipement DSI *</label>
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <input
+            type="text"
+            matInput
+            [formControl]="equipementProcessCtrl"
+            [matAutocomplete]="autoEquipSearch"
+            placeholder="Rechercher un équipement..."
+            required>
+
+          <mat-autocomplete
+            #autoEquipSearch="matAutocomplete"
+            [displayWith]="displayEquipement"
+            (optionSelected)="processForm.patchValue({equipement: $event.option.value})">
+            <mat-option *ngFor="let equip of filteredEquipementsDSI" [value]="equip">
+              {{ equip.numSerie }} - {{ equip.model?.nomModel }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <!-- Sélection d'état par défaut -->
+      <div class="form-group">
+        <label for="etat">État *</label>
+        <select formControlName="etat" class="form-control" required>
+          <option value="">Sélectionner un état</option>
+          <option *ngFor="let etat of defaultEtats" [ngValue]="etat">
+            {{ etat.titre }} - {{ etat.responsable }}
+          </option>
+        </select>
+      </div>
+        <div class="form-group">
+          <label for="date">Date de la panne *</label>
+          <input
+            type="date"
+            class="form-control"
+            id="date"
+            formControlName="date"
+            required
+            style="background-color: #f8f9fa; border: 2px solid #007bff;">
+        </div>
+
+      <!-- Commentaire -->
+      <div class="form-group">
+        <label for="commentaire">Commentaire *</label>
+        <textarea
+          formControlName="commentaire"
+          class="form-control"
+          rows="4"
+          placeholder="Entrez un commentaire..."
+      >
+        </textarea>
+      </div>
+
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="closeProcessModal()">Annuler</button>
+        <button type="submit" class="btn-submit" [disabled]="!processForm.valid">Déclencher</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de déclaration de panne -->
+<div class="modal" [ngClass]="{'show': showPanneModal}" (click)="closeOnOutsideClick($event)" *ngIf="showPanneModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="closePanneModal()">&times;</span>
+    <h3>Déclarer une panne</h3>
+
+    <form [formGroup]="panneForm" (ngSubmit)="onSubmitPanne()" novalidate>
+
+      <!-- Équipement concerné -->
+      <div class="form-group">
+        <label>Équipement</label>
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px solid #ddd; font-size: 14px;">
+          <strong>{{ selectedPanne.equipement?.model?.nomModel }}</strong> - {{ selectedPanne.equipement?.numSerie }}
+        </div>
+      </div>
+
+      <!-- Titre de la panne -->
+      <div class="form-group">
+        <label for="titre">Titre *</label>
+        <input
+          class="form-control"
+          id="titre"
+          type="text"
+          formControlName="titre"
+          placeholder="Ex: Écran ne s'allume plus"
+          required>
+      </div>
+
+      <!-- Date de la panne -->
+      <div class="form-group">
+        <label for="date">Date de la panne *</label>
+        <input
+          type="date"
+          class="form-control"
+          id="date"
+          formControlName="date"
+          required
+          style="background-color: #f8f9fa; border: 2px solid #007bff;">
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          class="form-inputp"
+          id="description"
+          formControlName="description"
+          rows="3"
+          placeholder="Décrivez le problème..."></textarea>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel" (click)="closePanneModal()">Annuler</button>
+        <button type="submit" class="btn-submit" [disabled]="!panneForm.valid">Déclarer la panne</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal pour confirmer la transition (DSI) -->
+<div class="modal" [ngClass]="{'show': showTransitionModal}" (click)="cancelTransition()" *ngIf="showTransitionModal">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="cancelTransition()">&times;</span>
+    <h3>Confirmer la transition</h3>
+    <p>Passer l'équipement <strong>{{ transitionEquip?.model?.nomModel }} - {{ transitionEquip?.numSerie }}</strong> à l'état <strong>{{ transitionNextState?.titre }}</strong>.</p>
+    <div class="form-group">
+      <label>Description (optionnel)</label>
+      <textarea class="form-control" [(ngModel)]="transitionDescription" rows="3" placeholder="Entrez une description..."></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="cancelTransition()">Annuler</button>
+      <button type="button" class="btn-submit" (click)="confirmTransition()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/js/sidebarmenu.js"></script>
+  <script src="./assets/js/app.min.js"></script>
+  <script src="./assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="./assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="./assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>
